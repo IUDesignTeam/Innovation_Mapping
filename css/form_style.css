@@ -1,0 +1,7 @@
+.input-size{
+    width: 30%;
+}
+.form-group.required .control-label:after {
+  content:"*";
+  color:red;
+ }
