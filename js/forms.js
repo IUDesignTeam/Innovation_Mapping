@@ -11,7 +11,7 @@ getFormValues() - Returns an object that contain all the user's input values.
 function getFormValues( p_formId ){
 	var answers = {};
 
-	var form_answers = $('#'+p_formId).find('input:checked, input:text, textarea, select');
+	var form_answers = $('#'+p_formId).find('input:checked, input:text, textarea, input:hidden, select');
 	for( var i=0; i<form_answers.length; i++){
 		// Current answer
 		var ans = form_answers[i];

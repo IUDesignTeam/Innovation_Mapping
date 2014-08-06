@@ -33,19 +33,44 @@ function createProjectForm( p_formType, p_formEle ) {
 	// Add an event to submit button
 	$('#'+p_formType+'ProjForm').submit( function(e){
 		e.preventDefault();
-		
-		var data = getFormValues(this.id);
-		var query;
-		if( p_formType == "add" ){
-			query = constructInsertQuery( cartodb_tables[1], data );
-		} 
-		else if( p_formType == "update" ){ 
-			var columnId = {"column":"cartodb_id", "value":this.parentNode.id};
-			query = constructUpdateQuery( cartodb_tables[1], data, columnId );
-    }
-    console.log("SQL: " + query);
-    postToCartoDB( query ); 
+    // 1. Validate the data
+
+    // Get the address for the project
+    var address = $('#q02_country').val();
+    // Find the x,y points for that address
+    geocode(address, function(location){
+      // Conver the points to cartodb format
+      var cartodb_geo = cartodbGeoLocation(location);
+      // Set the value of the hidden field 
+      $('input[name="the_geom"]').val( cartodb_geo );
+      // Get form data
+      var current_form = $('form')[0].id;
+      var data = getFormValues(current_form);
+     
+      var query;
+      if( current_form == "addProjForm" ){
+        query = constructInsertQuery( cartodb_tables[1], data );
+      } 
+      else if( current_form == "updateProjForm" ){ 
+        var columnId = {"column":"cartodb_id", "value":this.parentNode.id};
+        query = constructUpdateQuery( cartodb_tables[1], data, columnId );
+      }
+      console.log("SQL: "+ query);
+      // Post to CartoDB table
+      postToCartoDB( query ); 
+     });
+
+
+
+
+    //console.log("Carto Point: " + geo );
+    // 3. set the_geom hidden element's value to that of geo
+   // $('input[name="the_geom"]').val( geo );
+   
+    
+   
 	});	
+
 
   // Add an event to cancel button
   $('#cancel_prj').on('click', function(){
@@ -143,19 +168,66 @@ function promptUser() {
   return true;
 }
 
+
+
+
+
 /*
-  geoLocate()
+  cartodbGeoLocation
 */
-function geoLocate( p_address ){
+function cartodbGeoLocation( p_location ){
+  var latitude = p_location.lat;
+  var longitude = p_location.lng;
+
+ // console.log("\nFrom carto: " + JSON.stringify(p_location) );
+  // CartoDB's the_geom 
+  var cartodb_geo;
+  /*
+  // Slightly move the point over,
+  // so that the points wont stack up on top of each other
+  var latRandom = Math.random(); 
+  var latNegPos = Math.random() < 0.5 ? -1 : 1;  
+  latRandom *= latNegPos;
+  
+  var lonRandom = Math.random();
+  var lonNegPos = Math.random() < 0.5 ? -1 : 1;
+  lonRandom *= lonNegPos;
+
+  latitude += latRandom;
+  longitude += lonRandom;
+  */
+  if (latitude && longitude) {
+    console.log('Yeay');
+    // the_geom uses projected point, so we need to convert 
+    // the regular point position to projected point
+    cartodb_geo = "CDB_LatLng(" + latitude + "," + longitude +")";
+  } else {
+    cartodb_geo = "null";
+  }
+  //console.log("cartodb_geo -> " + cartodb_geo );
+  return cartodb_geo;
+  
+  
+}
+
+
+/*
+  geocode() - find the lat and lng using gogle's map api
+*/
+function geocode( p_address, callback ){
+  // Location Object that will hold the p_address location
+  var loc = {};// {"lat":null, "lng":null};
   // Create a new google geocoder
   var geocoder = new google.maps.Geocoder();
   geocoder.geocode( {"address":p_address}, function(results, status){
     if( status == google.maps.GeocoderStatus.OK ){
-     // map.setCenter( results[0].geometry.location );
-      console.log("RESULTS: " + results);
-    } else {
-      alert("Error - Geocode was not successful: " + status);
+      loc.lat = results[0].geometry.location.lat();
+      loc.lng = results[0].geometry.location.lng();
+    }else{
+      loc.lat = null;
+      loc.lng = null;
     }
+    callback(loc);
   });
 }
 
@@ -163,7 +235,7 @@ function geoLocate( p_address ){
 /*
 	getFromCartoDB()
 */
-function getFromCartoDB( p_query, p_callback ){
+function getFromCartoDB( p_query, callback ){
 	var url_query = "http://"+cartodb_account+".cartodb.com/api/v2/sql?q=" + p_query + "&api_key=" + cartodb_api_key;
 	var rows_obj;
 	$.getJSON( encodeURI(url_query), function(data){
@@ -171,7 +243,7 @@ function getFromCartoDB( p_query, p_callback ){
 	}).done(function() {
     	console.log("got the data");
     	// Run the callabck function with the rows_obj data passed in
-    	p_callback(rows_obj);
+    	callback(rows_obj);
   	});
 }
 
@@ -289,8 +361,9 @@ function constructInsertQuery( p_table, p_data ){
   var sql = "INSERT INTO " + p_table;
   for( key in p_data ){
     col_string +=  key;
-    
-    val_string += "'";
+      
+    //val_string += "'";
+    val_string += (key != "the_geom") ? "'":"";
 
     for( var i=0; i < p_data[key].length; i++ ){
       val_string += p_data[key][i]; //.replace(/'/g,"''"); // ---------------- EDIT see if it works with url encoder
@@ -298,7 +371,8 @@ function constructInsertQuery( p_table, p_data ){
         val_string += ", ";   
       }
     }
-    val_string += "'";
+    //val_string += "'";
+    val_string += (key != "the_geom") ? "'":"";
 
     keyCount++; 
     if(keyCount < len){

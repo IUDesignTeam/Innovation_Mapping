@@ -130,10 +130,10 @@ function createFilters() {
   createSelectEle( "country", "q02_country", country_values, docFrag );
   // Filter for
   var checkboxes_filters = [
-      sections[3],    // Primary Sector
-      sections[5],    // Scale 
-      sections[10],    // Created By 
-      sections[9]     // Created For 
+      sections[2],    // Primary Sector
+      sections[4],    // Scale 
+      sections[9],    // Created By 
+      sections[8]     // Created For 
   ];   
   var checkboxes_wrap = document.createElement("div");
   checkboxes_wrap.id = "all_checks_filter";
