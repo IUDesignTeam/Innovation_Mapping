@@ -52,24 +52,14 @@ function createProjectForm( p_formType, p_formEle ) {
         query = constructInsertQuery( cartodb_tables[1], data );
       } 
       else if( current_form == "updateProjForm" ){ 
-        var columnId = {"column":"cartodb_id", "value":this.parentNode.id};
+        var columnId = {"column":"cartodb_id", "value": $('#'+current_form).parent().attr('id')};
         query = constructUpdateQuery( cartodb_tables[1], data, columnId );
       }
-      console.log("SQL: "+ query);
+      console.log("QUERY: "+query);
       // Post to CartoDB table
       postToCartoDB( query ); 
      });
-
-
-
-
-    //console.log("Carto Point: " + geo );
-    // 3. set the_geom hidden element's value to that of geo
-   // $('input[name="the_geom"]').val( geo );
-   
-    
-   
-	});	
+	});
 
 
   // Add an event to cancel button
@@ -152,7 +142,7 @@ function fillInForm( p_project ) {
       this.value = prj[this.name];
     }
   });
-
+  console.log(prj);
 }
 
 /*
@@ -182,10 +172,10 @@ function cartodbGeoLocation( p_location ){
  // console.log("\nFrom carto: " + JSON.stringify(p_location) );
   // CartoDB's the_geom 
   var cartodb_geo;
-  /*
+  
   // Slightly move the point over,
   // so that the points wont stack up on top of each other
-  var latRandom = Math.random(); 
+  /*var latRandom = Math.random(); 
   var latNegPos = Math.random() < 0.5 ? -1 : 1;  
   latRandom *= latNegPos;
   
@@ -197,17 +187,13 @@ function cartodbGeoLocation( p_location ){
   longitude += lonRandom;
   */
   if (latitude && longitude) {
-    console.log('Yeay');
     // the_geom uses projected point, so we need to convert 
     // the regular point position to projected point
     cartodb_geo = "CDB_LatLng(" + latitude + "," + longitude +")";
   } else {
     cartodb_geo = "null";
   }
-  //console.log("cartodb_geo -> " + cartodb_geo );
   return cartodb_geo;
-  
-  
 }
 
 
@@ -361,17 +347,15 @@ function constructInsertQuery( p_table, p_data ){
   var sql = "INSERT INTO " + p_table;
   for( key in p_data ){
     col_string +=  key;
-      
-    //val_string += "'";
+ 
     val_string += (key != "the_geom") ? "'":"";
 
     for( var i=0; i < p_data[key].length; i++ ){
-      val_string += p_data[key][i]; //.replace(/'/g,"''"); // ---------------- EDIT see if it works with url encoder
+      val_string += p_data[key][i]; 
       if( p_data[key].length > 1 && i < p_data[key].length-1 ){
         val_string += ", ";   
       }
     }
-    //val_string += "'";
     val_string += (key != "the_geom") ? "'":"";
 
     keyCount++; 
@@ -397,14 +381,14 @@ function constructUpdateQuery( p_table, p_data, p_where ){
   var sql = "UPDATE " + p_table + " SET ";
 
   for( key in p_data ){
-    sql += key + "='"; //  + p_data[key] + "'"; //.replace(/'/g,"''");;
+    sql += key +"=" + ( (key != "the_geom") ? "'":"" );
     for( var i=0; i < p_data[key].length; i++ ){
       sql += p_data[key][i];
       if( p_data[key].length > 1 && i < p_data[key].length-1 ){
         sql += ", ";
       } 
     }
-    sql += "'";
+    sql += (key != "the_geom") ? "'":"";
     keyCount++;
     if(keyCount < len)sql += ", ";
   }
