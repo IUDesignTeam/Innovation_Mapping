@@ -168,24 +168,30 @@ function promptUser() {
 function cartodbGeoLocation( p_location ){
   var latitude = p_location.lat;
   var longitude = p_location.lng;
-
- // console.log("\nFrom carto: " + JSON.stringify(p_location) );
+  console.log("B - latitude = " + latitude);
+  console.log("B - longitute = " +  longitude);
+ 
   // CartoDB's the_geom 
   var cartodb_geo;
   
   // Slightly move the point over,
   // so that the points wont stack up on top of each other
-  /*var latRandom = Math.random(); 
+  var latRandom = Math.random(); 
   var latNegPos = Math.random() < 0.5 ? -1 : 1;  
   latRandom *= latNegPos;
+  console.log("latRandom = " + latRandom);
   
   var lonRandom = Math.random();
   var lonNegPos = Math.random() < 0.5 ? -1 : 1;
   lonRandom *= lonNegPos;
+  console.log("lonNegPos = " + lonNegPos);
 
   latitude += latRandom;
   longitude += lonRandom;
-  */
+  console.log("A - latitude = " + latitude);
+  console.log("A - longitute = " +  longitude + "\n");
+
+  
   if (latitude && longitude) {
     // the_geom uses projected point, so we need to convert 
     // the regular point position to projected point
@@ -222,32 +228,33 @@ function geocode( p_address, callback ){
 	getFromCartoDB()
 */
 function getFromCartoDB( p_query, callback ){
-	var url_query = "http://"+cartodb_account+".cartodb.com/api/v2/sql?q=" + p_query + "&api_key=" + cartodb_api_key;
 	var rows_obj;
-	$.getJSON( encodeURI(url_query), function(data){
-		rows_obj = data.rows;
-	}).done(function() {
-    	console.log("got the data");
-    	// Run the callabck function with the rows_obj data passed in
-    	callback(rows_obj);
-  	});
+  var url =  "http://localhost:81/Innovation_Mapping/proxy.php?sql=" + encodeURI(p_query) + "&callback=?";
+
+  $.getJSON( url, {format: "json"})
+  .done(function(data){
+    rows_obj = data.rows;
+    // Run the callabck function with the rows_obj data passed in
+    callback(rows_obj);
+  }).fail(function( jqxhr, textStatus, error ){
+    var err = textStatus + ", " + error;
+    console.log("Request Failed: " + err);  
+  });
 }
 
 /*
 	postToCartoDB()
 */
 function postToCartoDB( p_query ){	
-	// ---- NEED ----
-	// latitude, longitude
-	
-	var url_query = "http://"+cartodb_account+".cartodb.com/api/v2/sql?q=" + p_query + "&api_key=" + cartodb_api_key;
-	$.post( encodeURI(url_query) )
+	var url = "http://localhost:81/Innovation_Mapping/proxy.php"; 
+  $.post( url, {"sql": p_query} )
 	.done(function(){
-		// Refresh the Page
 		console.log("Project has been added successfully");
+    // Add a success message   
 	})
-	.fail(function(data){
-		console.log("ERROR: " + data.error[0]);
+	.fail(function( jqxhr, textStatus, error ){
+    var err = textStatus + ", " + error;
+    console.log("Request Failed: " + err);  
 	});
 }
 
@@ -263,7 +270,7 @@ function getOfficeProjects( p_sessionObj ){
         tempString = constructSelectQuery(cartodb_tables[1], {"region": [p_sessionObj["Region"]]}, false, false );
       } else {
         //tempString = selectKeywordQuery(cartodb_tables[1], p_sessionObj["Country"], ["q02_country"]);
-        tempString = constructSelectQuery(cartodb_tables[1], {"q02_country":p_sessionObj["Country"]}, false, true );
+        tempString = constructSelectQuery(cartodb_tables[1], {"q02_country":[p_sessionObj["Country"]]}, false, true );
       }
     }else{
       tempString = constructSelectQuery( cartodb_tables[1], null, true, false );
