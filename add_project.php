@@ -7,7 +7,6 @@
     bootStrapHeader(); 
   ?>
 
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.uncompressed.js"></script> 
 
   <link rel="stylesheet" type="text/css" href="css/main_style.css">
@@ -18,6 +17,7 @@
   <script src="js/variables.js"></script>
   <script src="js/sectionObjects.js"></script>
   <script src="js/helpers.js"></script>
+  <script src="js/validator.js"></script>
   <script src="js/forms.js"></script>
   <script src="js/innovation_map.js"></script>
   <script src="js/projects.js"></script>
@@ -27,12 +27,10 @@
     createHeader();
    // confirmSession();
   ?>
-  <div id = "main_div">
-    <!--<h2>Mapping Innovation Project</h2>
-    <p>Please fill out the responses for the questions listed below.</p> -->
+  <div id = "main_div">   
+    <h3>Add New Project</h3>
+    <p class="help-block">Please fill out the responses for the questions listed below.</P>
     <form id="addProjForm" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>"></form>
-    <!--Google Docs iframe does everything for us-->
-    <!--<iframe src="https://docs.google.com/forms/d/1HDzxOZ7ZZ1qtYX3S9RTlPUNJqiurY_bryoAZbJN8X1U/viewform?embedded=true" width="100%" height="3000" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>-->
-  </div>
+   </div>
   <?php jsDocuments(); ?>
 </body>

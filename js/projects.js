@@ -9,58 +9,71 @@ function createProjectForm( p_formType, p_formEle ) {
 		var title = sections[i].title;
 		// For name attribute use the same names as the cartoDB's column names
 		var name = sections[i].cartodb_field; 
-		var desc = addParagraph( sections[i].help_text );
-
+		var desc = addParagraph( sections[i].help_text, "help-block" );
+    // Determine an element type
     var ele;
 		if( type == "text" || type == "textarea" ){
       ele = createTextField( name, type, title, desc );
 		}
 		else if( type == "checkbox" || type == "radio" ){
 			var value = sections[i].input_value;			 
-      ele = createInputElements( name, type, title, value );
-		}
+      ele = createInputElements( name, type, title, value, desc );
+    }
     else if( type == "hidden" ){
       ele = createHiddenEle( name, value );
     }
     p_formEle.appendChild( ele );
-	}
-	
+	}// end of for loop
+
+  // Add a required class to all except q03b_sector
+  $('label.section-title').each(function() {
+    if($(this).parent()[0].id != "q03b_sector-checkboxes") {
+      $(this).parent().addClass('required');
+    }
+  });
+
 	// Add Project Button
 	p_formEle.appendChild( createButton( p_formType+"_prj", "submit", p_formType+" Project", "btn btn-default") );
-	// Add a Cancel Button 
+	
+  // Add a Cancel Button 
 	p_formEle.appendChild( createButton("cancel_prj", "button", "Cancel", "btn btn-default") );
 
+  // 1. Validate the data
+   // validateInputs();
+
 	// Add an event to submit button
-	$('#'+p_formType+'ProjForm').submit( function(e){
-		e.preventDefault();
+	$('#'+p_formType+'ProjForm').submit(function(e){
+    // Stop the form from submiting
+    e.preventDefault();
     // 1. Validate the data
-
-    // Get the address for the project
-    var address = $('#q02_country').val();
-    // Find the x,y points for that address
-    geocode(address, function(location){
-      // Conver the points to cartodb format
-      var cartodb_geo = cartodbGeoLocation(location);
-      // Set the value of the hidden field 
-      $('input[name="the_geom"]').val( cartodb_geo );
-      // Get form data
-      var current_form = $('form')[0].id;
-      var data = getFormValues(current_form);
-     
-      var query;
-      if( current_form == "addProjForm" ){
-        query = constructInsertQuery( cartodb_tables[1], data );
-      } 
-      else if( current_form == "updateProjForm" ){ 
-        var columnId = {"column":"cartodb_id", "value": $('#'+current_form).parent().attr('id')};
-        query = constructUpdateQuery( cartodb_tables[1], data, columnId );
-      }
-      console.log("QUERY: "+query);
-      // Post to CartoDB table
-      postToCartoDB( query ); 
-     });
-	});
-
+    validateSubmitResults();
+    //if( valid ){
+      // Get the address for the project
+      var address = $('#q02_country').val();
+     // Find the x,y points for that address
+      geocode(address, function(location){
+        // Conver the points to cartodb format
+        var cartodb_geo = cartodbGeoLocation(location);
+        // Set the value of the hidden field 
+        $('input[name="the_geom"]').val( cartodb_geo );
+        // Get form data
+        var current_form = $('form')[0].id;
+        var data = getFormValues(current_form);
+       
+        var query;
+        if( current_form == "addProjForm" ){
+          query = constructInsertQuery( cartodb_tables[1], data );
+        } 
+        else if( current_form == "updateProjForm" ){ 
+          var columnId = {"column":"cartodb_id", "value": $('#'+current_form).parent().attr('id')};
+          query = constructUpdateQuery( cartodb_tables[1], data, columnId );
+        }
+        console.log("QUERY: "+query);
+        // Post to CartoDB table
+       postToCartoDB( query );       
+      });
+    //}
+  });
 
   // Add an event to cancel button
   $('#cancel_prj').on('click', function(){
@@ -179,17 +192,17 @@ function cartodbGeoLocation( p_location ){
   var latRandom = Math.random(); 
   var latNegPos = Math.random() < 0.5 ? -1 : 1;  
   latRandom *= latNegPos;
-  console.log("latRandom = " + latRandom);
+  //console.log("latRandom = " + latRandom);
   
   var lonRandom = Math.random();
   var lonNegPos = Math.random() < 0.5 ? -1 : 1;
   lonRandom *= lonNegPos;
-  console.log("lonNegPos = " + lonNegPos);
+  //console.log("lonNegPos = " + lonNegPos);
 
   latitude += latRandom;
   longitude += lonRandom;
-  console.log("A - latitude = " + latitude);
-  console.log("A - longitute = " +  longitude + "\n");
+  //console.log("A - latitude = " + latitude);
+ // console.log("A - longitute = " +  longitude + "\n");
 
   
   if (latitude && longitude) {
@@ -249,8 +262,10 @@ function postToCartoDB( p_query ){
 	var url = "http://localhost:81/Innovation_Mapping/proxy.php"; 
   $.post( url, {"sql": p_query} )
 	.done(function(){
-		console.log("Project has been added successfully");
+	   var msg = "Project has been added successfully";
     // Add a success message   
+    var msg_box = addParagraph(msg, "alert alert-info");
+    $('form').before(msg_box);
 	})
 	.fail(function( jqxhr, textStatus, error ){
     var err = textStatus + ", " + error;

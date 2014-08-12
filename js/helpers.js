@@ -29,6 +29,10 @@ function addBootstrapClasses(){
   $('form div:not([class])').addClass('form-group');
   // Find all text and textarea elements 
   $('input:text, textarea').addClass('form-control input-size');
+  // For grid 
+  ///$('form').children().addClass('col-md-8');
+ // $('.validator-msg').addClass('col-md-4');
+  $('form').addClass('col-md-8');
 }
 
 
@@ -41,6 +45,16 @@ function addClass( p_elements, p_className ){
 }
 
 /* Changing a string */
+function sanitizeString( p_string ){
+  // Replace script and html tags
+  var str = p_string.replace(/<script>.*<\/script>/g, "");
+  str.replace(/<(.*?)>/g, "");
+  // Replace sql commannds if any
+  str.replace(/DROP/gi, "");
+  str.replace(/;/g, ",");
+  return str;
+}
+
 function camelCase( p_string ){
   // Make the first letter lowercase
   var str = p_string.substr(0, 1).toLowerCase() + p_string.substr(1);
@@ -48,6 +62,7 @@ function camelCase( p_string ){
   str = str.replace(" ", ""); 
   return str;
 }
+
 
 /* For Objects */
 function getObjLength( p_object ){
