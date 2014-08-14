@@ -2,32 +2,32 @@
 <html>
 <head>
   <title>UNICEF Mapping Innovation Login</title>
-	<link rel="stylesheet" type="text/css" href="css/main_style.css">
-  <link rel="stylesheet" type="text/css" href="css/login_style.css">
   <?php
-  include 'php_util/util.php';
-  bootStrapHeader();
-  confirmLogin();
+    include 'php_util/util.php';
+    createHeader();
+    confirmLogin();
   ?>
-</head>
+ </head>
 <body>
-  <?php createHeader(); ?>
-  <div class="container-fluid" id="main_div">
-  	<h3>Please Log In</h3>
-  	<div id="login_form">
-  		<form role="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-  			<div class="form-group">
-          <label for="username">E-mail: </label>
-          <input id="username" type="text" name="username"><br>
-  			</div>
-        <div class="form-group">
-          <label for="password">Password: </label>
-          <input id="pasword" type="password" name="pwd"><br>
-  			</div>
-        <div class="form-group"><!-- turn this into <button> -->
-          <input class="btn btn-default" type="submit" value="Submit">
-  		  </div>
-      </form>
+  <?php createNavigation("Log In"); ?>
+  <div id="main_div" class="container-fluid">
+  	<div class="row">
+      <div id="login" class="center-block col-md-4">
+        <form role="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+          <h4>Please Log In</h4>
+          <div class="form-group">
+            <label for="username">Office: </label>
+            <input id="username" type="text" name="username"><br>
+          </div>
+          <div class="form-group">
+            <label for="password">Password: </label>
+            <input id="pasword" type="password" name="pwd"><br>
+          </div>
+          <div class="form-group">
+            <button type="Submit" class="btn btn-default">Log In</button>
+          </div>
+        </form> 
+      </div>
   	</div>
   </div>
   <?php jsDocuments(); ?>

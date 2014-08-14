@@ -53,7 +53,7 @@
     return $data;
   }
 
-  function createHeader() {
+  function createNavigation($active) {
     session_start();
     //Initialize array of links and link names, innovation_map and about will be on all pages, so initialize array with those links
     $links = array("index.php", "about.php");
@@ -76,23 +76,27 @@
     }
     //Echo navbar style class items
     $nav_menu = <<<NAVBAR
-    <nav class"navbar-wrapper navbar-default navbar-static-top" role="navigation">     <div class="container"><div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span></button>
-          <a class="navbar-brand" href="#">Innovation Projects in UNICEF</a>
+    <nav class="navbar-wrapper navbar-default navbar-static-top" role="navigation">     
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Global Mapping of UNICEF Innovations</a>
         </div>
-
-        <div class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
 NAVBAR;
     //It honestly doesn't matter wether you pick count($links) or count($link_names), both should be same size
     for ($i = 0; $i < count($links); $i++) {
       //Makes format: <li><a href='link'>Link Name</a></li>
       $nav_menu .= "<li ";
-      if ($i==0) $nav_menu .= "class = 'active'";
+      if ($link_names[$i] == $active) { 
+        $nav_menu .= "class = 'active'";
+      }
       $nav_menu .= "><a href='".$links[$i]."'>".$link_names[$i]."</a></li>";
     }
     $nav_menu .= "</ul></div></div></nav>";
@@ -123,20 +127,7 @@ NAVBAR;
       header("Location: login.php");
     }
   }
-  /*
-  function checkAddedProj() {
-    if (isset($_SERVER["QUERY_STRING"]) && strlen($_SERVER["QUERY_STRING"]) > 0) {
-      $url = explode("&?",$_SERVER["QUERY_STRING"]);
-      //include 'php_util/includes/mysql_data.php';
-      $con = mysqli_connect($mysql_host,$mysql_user,$mysql_pass,$mysql_db);
-      if (mysqli_connect_errno()) {
-        echo "failed to connect to MySQL: " . mysqli_connect_errno();
-      }
-      mysqli_query($con,"INSERT INTO ".$info." VALUES('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."','Added Project: ".str_replace("'","''",$url[1])."')");
-      echo '<script>window.location.href = "your_projects.php"</script>';
-    }
-  }
-  */
+
 
   function addUpdatedProject() {
     include 'includes/mysql_data.php';
@@ -167,23 +158,28 @@ NAVBAR;
     }
   }
 
-  function bootStrapHeader() {
+  function createHeader() {
     $header = <<<HEADER
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
   
-      <!-- Bootstrap CSS -->
-      <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-      <!--  <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">  -->
- 
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- include google maps library *before* load cartodb.js -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_jSsgldpxYyWpt3PQS9WruC6MIx0rX2Q"></script> 
+    <!-- cartodb.js library -->
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.uncompressed.js"></script>  
 
-      <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-      <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-      <![endif]-->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <!-- Google Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/main_style.css">
 HEADER;
     echo $header;
   }
@@ -191,6 +187,7 @@ HEADER;
   function jsDocuments() {
     $scripts = '<script src="js/jquery.min.js"></script>';
     $scripts .= '<script src="bootstrap/js/bootstrap.min.js"></script>';
+    $scripts .= '<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>';
     echo $scripts;
   } 
 

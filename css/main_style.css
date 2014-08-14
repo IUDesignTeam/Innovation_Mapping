@@ -1,63 +1,117 @@
-html, body{
-    background-color:lightgray;
+body, html {
+  height: 100%;
 }
 
-nav{
-    /*background-color: #f2f2f2;*/
-    background-color: #1CABE2;
-    height:6em;
+body {
+  font-family: 'Roboto', sans-serif;
 }
-nav a{
+
+/* Change Bootstrap style */
+.navbar-default {
+    background-color: #1cabe2;
+    border-color: #1cabe2;
+}
+
+.navbar-default .navbar-brand {
+   color: #fff;
+}
+
+.navbar-default .navbar-nav > li > a {
     color: #fff;
 }
 
-.container {
-    margin-left:0 !important;
-    margin-right:0 !important;
-    width:auto !important;
-}
-
-.navbar-header .navbar-brand {
-    float:left;
-    font-size:24px;
-    left:0;
-}
-
 ul.nav {
-    float:right;
-    font-size:18px;
+  float:right;
 }
 
-#intro {
-    top:0;
-    position:absolute;
-    background:gray;
-    z-index:12;
-    padding-top:10px;   
-    left:0;
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+    color: #888;
+}
+.navbar-default .navbar-nav > .active > a, 
+.navbar-default .navbar-nav > .active > a:hover, 
+.navbar-default .navbar-nav > .active > a:focus {
+    color: #555;
+    background-color: #1cabe2;
 }
 
-#intro h1{
-    float: left;
-    margin-top: 10px;
-    margin-left: 25px;
-    margin-right: 50px;
+.center-block {
+  float: none;
 }
 
-#intro #main_menu{
-    margin-top: 10px;
+.container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
-#main_menu li{
-    display: inline-block;
-    font-size: 20px;    
-    margin-right: .624%;
-    padding: 10px;
+#main_div, #main_div .row /*, .center-block*/ {
+  height: 100%;
 }
 
-#main_menu li a{
-    text-decoration:none;
+#aboutInfo, #table-wrap, form {
+  padding: 1em 2em;
+  box-shadow: 0px 1px 1px 1px #888888;
+  padding-bottom: 3em;
+  height: 100%;
 }
 
-label.required:after {content:" *";color:red;}
-p.error_par {color:red;}
+/* Form Styles */
+#formInfo {
+  margin-bottom: 2em;
+}
+
+.section-title{
+  font-weight: bold;
+}
+
+.required .section-title:after {
+  content: " *";
+  color: red;
+}
+
+.required {
+  margin-bottom: 2em;
+}
+
+.checkbox, .radio{
+  padding-left: 2em;
+}
+.checkbox label, .radio label {
+  padding: 0;
+}
+
+.validator-msg {
+  float: right;
+}
+
+.help-block {
+  font-weight: 300;
+}
+
+/* Log In Page  */
+#login {
+  width: 23em;
+  height: 15em;
+  margin-top: 10em;
+}
+
+#login h4 {
+  text-align: center;
+  margin-bottom: 1em;
+  color: #7b7b7b;
+}
+
+#login .form-group {
+  float: right;
+  color: #adadad;
+}
+
+.btn {
+  background-color: black;
+  opacity: 0.7;
+  color: #fff;
+  position: relative;
+  float: right;
+  margin-left: 1em;
+}

@@ -4,41 +4,54 @@
   <title>Your Projects</title>
   <?php 
     include 'php_util/util.php'; 
-    bootStrapHeader(); 
+    createHeader(); 
   ?>
-  
-  <!-- include google maps library *before* load cartodb.js -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_jSsgldpxYyWpt3PQS9WruC6MIx0rX2Q"></script> 
-    <!-- include cartodb.js library -->
-    <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.uncompressed.js"></script>  
-
+  <!-- sortable.js for sorting table data -->
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/sortable/0.6.0/js/sortable.min.js"></script>
   <script src="js/variables.js"></script>
   <script src="js/sectionObjects.js"></script>
-   <script src="js/helpers.js"></script>
+  <script src="js/helpers.js"></script>
   <script src="js/forms.js"></script>
   <script src="js/innovation_map.js"></script>
   <script src="js/projects.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="css/main_style.css">
+  <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/sortable/0.6.0/css/sortable-theme-bootstrap.css">
   <link rel="stylesheet" type="text/css" href="css/your_projects_style.css">
 </head>
 <body> 
   <?php 
-    createHeader();
+    createNavigation("Your Projects");
     confirmSession();
     //addUpdatedProject();
   ?>
-  <div id="new_proj"><a href="add_project.php" style="text-decoration:none; color:white;">+ Add a new project</a></div>
-  <table id="projects_table" class="table">
- 	<thead><tr>
- 		<th>Project Name</th>
- 		<th>Scale</th>
- 		<th>Section</th>
-    <th>Country</th>
-    <th>Update</th>
- 	</tr></thead>
-  <?php findProjects(); ?>
-  </table>
+  <div id="main_div" class="container-fluid"> 
+    <div class="row">  
+      <div class="center-block col-md-9">
+        <div id="table-wrap">
+          <div id="tableInfo">
+            <h3 class="inline-block">Your Projects Dashboard</h3>
+            <p class="help-block">There are <span id="projNum">0</span> projects</p>
+            <button type="button" class="btn btn-default inline-block" value=""><a href="add_project.php">Add a new project</a></button>
+          </div>
+          <?php findProjects(); ?>
+          <table id="projects_table" class="table table-responsive sortable sortable-theme-bootstrap" data-sortable>
+            <thead>
+              <tr>
+              <th>PROJECT NAME</th>
+              <th>SCALE</th>
+              <th>SECTION</th>
+              <th>COUNTRY</th>
+              <th>MODIFIED</th>
+              <th data-sortable="false"></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
   <?php jsDocuments(); ?>
+
 </body>
 </html>

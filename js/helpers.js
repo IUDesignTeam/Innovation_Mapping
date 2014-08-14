@@ -23,6 +23,24 @@ function createLink( p_href, p_class, p_text ){
   return link;
 }
 
+/*
+addParagraph() - creates a <p> element. Use this for adding extra text to 
+  each section.
+
+  p_textString  - TextNode string
+*/
+function addParagraph( p_textString, p_class ) {
+  //Create paragraph element
+  var par = document.createElement("p");
+  // Bootstrap class
+  par.className = p_class; 
+  //Add text to paragraph
+  par.appendChild(document.createTextNode( p_textString ));
+  //Return paragraph
+  return par;
+}
+
+
 function addBootstrapClasses(){
   // Find all the div elements that dont have a class yet
   // (they are used for Bootstrap formating)
@@ -32,17 +50,9 @@ function addBootstrapClasses(){
   // For grid 
   ///$('form').children().addClass('col-md-8');
  // $('.validator-msg').addClass('col-md-4');
-  $('form').addClass('col-md-8');
+  //$('form').addClass('col-md-8');
 }
 
-
-function addClass( p_elements, p_className ){
-  console.log("Calling from addClass");
-  for( var i=0; i<p_elements.length; i++ ){
-    p_elements[i].setAttribute("class", p_className);
-    console.log(i + " : " + p_elements[i].value);
-  }
-}
 
 /* Changing a string */
 function sanitizeString( p_string ){
@@ -63,6 +73,10 @@ function camelCase( p_string ){
   return str;
 }
 
+function upperCase( p_string ){
+  var str = p_string.substr(0, 1).toUpperCase() + p_string.substr(1);;
+  return str;
+}
 
 /* For Objects */
 function getObjLength( p_object ){
@@ -71,4 +85,9 @@ function getObjLength( p_object ){
     if(p_object.hasOwnProperty( key )) count++;
   }
   return count;
+}
+
+function convertTime( p_timestamp ){
+  //var time =
+  return time;
 }

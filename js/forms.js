@@ -16,15 +16,61 @@ function getFormValues( p_formId ){
 		// Current answer
 		var ans = form_answers[i];
 		if( !answers.hasOwnProperty(ans.name) ){
-			if(ans.value == ""){
-				ans.value = "placeholder data"; //----------------------------- DELETE
-			}
 			answers[ans.name] = [ans.value];
 		}else{
 			answers[ans.name].push(ans.value);
 		}
 	}
 	return answers;
+}
+
+
+/*
+- Checks if all the fields are filed in
+- Sanitizes the inputs
+*/
+function validateSubmitResults() {
+	console.log("Calling from validata");
+	var validated; 
+  // Select only the inputs that have a parent with a required class
+  var required_fields = $('.required');
+  // Check if the required fields are filled in
+ 	required_fields.each(function(){
+ 		// Determite what type of input it is, and display appropriate alert message
+		var field, msg_string;
+   	if( $(this).hasClass('checkbox_container') || $(this).hasClass('radio_container') ){
+   		field = $(this).find('input:checked');
+   		msg_string = "Please select an option";
+   	}else{
+   		field = $(this).find('input:text, textarea');
+   		msg_string = "Please fill in the field";
+   	} 
+		// For the checkbox/radio check the lenght of selected inputs,
+		// at least 1 needs to be selected for it to validate   
+		// And for the text, check that the value is not an empty string
+ 		if( (field.length == 0) || !field.val() ){
+ 			$(this).addClass('alert alert-warning');
+ 			var msg = addParagraph(msg_string, "validator-msg text-danger");
+ 			// Check if there is already an alert message class, 
+ 			// so that there wouldn't be duplicates
+			if( $(this).find('p.validator-msg').length == 0  ){
+      	$(this).find('.section-title').before(msg);
+      }
+      validated = false;
+ 		}
+ 		else{
+ 			// Remove the alert classes and message
+ 			$(this).find('p.validator-msg').detach();
+      $(this).removeClass('alert alert-warning'); 
+      validated = true;
+ 		}
+ 		// Sanitize the inputs values
+ 		if( validated ){
+ 			var answer = sanitizeString(field.val());
+ 			field.val(answer);
+ 		}
+ 	});
+	return validated;
 }
 
 /*
@@ -39,10 +85,10 @@ function createTextField( inputName, type, fieldName, descriptionEle ){
 	// Create a document fragment to hold the elements
 	var docFrag = document.createDocumentFragment(); 
 	var div_wrap = document.createElement( "div" );
-	var label = document.createElement( "label" );
-	label.className ="section-title";
+	var title = document.createElement( "h5" );
+	title.className ="section-title";
 	//label.setAttribute( "for", inputName );
-	label.appendChild( document.createTextNode( fieldName ) );
+	title.appendChild( document.createTextNode( fieldName.toUpperCase() ) );
 
 	var ele;
 	if( type == "text" ){
@@ -56,7 +102,7 @@ function createTextField( inputName, type, fieldName, descriptionEle ){
 	}
 	ele.name = inputName;
 	// Append all the elements to the div wrapper
-	div_wrap.appendChild( label );
+	div_wrap.appendChild( title );
 	if( descriptionEle ) div_wrap.appendChild( descriptionEle );
 	div_wrap.appendChild ( ele );
 	docFrag.appendChild( div_wrap );
@@ -74,13 +120,13 @@ createInputElements
 function createInputElements( p_name, p_type, p_fieldName, p_values, p_desc ){
 	// Create a div element to group the checkboxes or radio buttons
 	var group_div = document.createElement("div"); 
-	group_div.className = p_type + "-container";
-	group_div.id = p_name + "-checkboxes";
+	group_div.className = p_type + "_container";
+	group_div.id = p_name + "_checkboxes";
 
-	var main_label = document.createElement( "label" );
-	main_label.className ="section-title";
-	main_label.appendChild( document.createTextNode(p_fieldName) );
-	group_div.appendChild( main_label );
+	var header = document.createElement( "h5" );
+	header.className ="section-title";
+	header.appendChild( document.createTextNode(p_fieldName.toUpperCase()) );
+	group_div.appendChild( header );
 	// Helper text
 	if( p_desc ) group_div.appendChild( p_desc );
 	
@@ -91,23 +137,26 @@ function createInputElements( p_name, p_type, p_fieldName, p_values, p_desc ){
 		div_wrap.className = p_type;  // ------ MAKE A FUNCTION FOR BOOTSTAP
 		// Create a label element
 		var label = document.createElement( "label" );
+
 		// Create an input element
 		var input = document.createElement("input");
+		var input_id = p_name + "_" + i;
 		input.setAttribute( "type", p_type );
 		input.setAttribute( "name", p_name );
 		input.setAttribute( "value", p_values[i] );
-		// Add additional attributes if its a radio button
-		if( p_type == "radio" ){	
-			input.id = p_name + "_" + i;	
-		}	
-		label.appendChild( input );	
+		input.setAttribute( "id", input_id );
+
+		//label.appendChild( input );	
+		label.setAttribute("for", input_id);
 		label.appendChild( document.createTextNode(p_values[i]) );
 		// append each element to the div_wrap
+		div_wrap.appendChild( input );
 		div_wrap.appendChild( label );
 		group_div.appendChild( div_wrap );
 	} 
 	return group_div;
 }
+
 
 /*
  createHiddenEle
@@ -148,6 +197,7 @@ function createSelectEle( p_id, p_filterName, p_values, p_parentEle ){
   // Select the parent element that will hold the sfilter
   p_parentEle.appendChild(filter_div);
 }
+
 /*
 	createSearchInput()
 */
@@ -162,22 +212,6 @@ function createSearchInput( p_parentEle, p_placeholder ){
   p_parentEle.appendChild( search_div );
 }
 
-/*
-addParagraph() - creates a <p> element. Use this for adding extra text to 
-	each section.
-
-	p_textString	- TextNode string
-*/
-function addParagraph( p_textString, p_class ) {
-	//Create paragraph element
-	var par = document.createElement("p");
-	// Bootstrap class
-	par.className = p_class; 
-	//Add text to paragraph
-	par.appendChild(document.createTextNode( p_textString ));
-	//Return paragraph
-	return par;
-}
 
 /*
 	createButton()
@@ -196,62 +230,3 @@ function createButton( p_id, p_type, p_value, p_class ){
   divWrap.appendChild( btn );
   return divWrap;
 }
-
-/*
-Makes sure that the inputs are in the correct format
-*/
-function validateInputs(){
-	//has-error
-	$('.required').find('input:text, texarea').each(function(){
-		$(this).blur(function(){
-			// Check for the limits
-		});
-	});
-}
-
-/*
-- Checks if all the fields are filed in
-- Sanitizes the inputs
-*/
-function validateSubmitResults() {
-	var validated;
-  // Select only the inputs that have a parent with a required class
-  var required_fields = $('.required');
-  // Check if the required fields are filled in
- 	required_fields.each(function(){
- 		// Determite what type of input it is, and display appropriate alert message
-		var field, msg_string;
-   	if( $(this).hasClass('checkbox-container') || $(this).hasClass('radio-container') ){
-   		field = $(this).find('input:checked');
-   		msg_string = "Please select an option";
-   	}else{
-   		field = $(this).find('input:text, textarea');
-   		msg_string = "Please fill in the field";
-   	} 
-		// For the checkbox/radio check the lenght of selected inputs,
-		// at least 1 needs to be selected for it to validate   
-		// And for the text, check that the value is not an empty string
- 		if(field.length == 0 || field.val() == "" ){
- 			$(this).addClass('alert alert-warning');
- 			var msg = addParagraph(msg_string, "validator-msg text-danger");
- 			// Check if there is already an alert message class, 
- 			// so that there wouldn't be duplicates
-			if( $(this).find('p.validator-msg').length == 0  ){
-      	$(this).find('label.section-title').before(msg);
-      }
-      validated = false;
- 		}
- 		else{
- 			// Remove the alert classes and message
- 			$(this).find('p.validator-msg').detach();
-      $(this).removeClass('alert alert-warning');
-      validated = true;
- 		}
- 		// Sanitize the inputs values
- 		if( validated ){
- 			var answer = sanitizeString(field.val());
- 			field.val(answer);
- 		}
- 	});
-}
-

@@ -15,26 +15,40 @@ function initMap(){
       layer_selector: false,
       legends: false
   };
-    
+
+  
   // Create a visualization map inside the #map div
   var vizMap = cartodb.createVis( 'map', layerUrl, visOptions );
-
   vizMap.on('done', function( vis, layers ){
+    var map_div = document.getElementById("map");
+    // Change the position of the zoom button
+    var zoom_width = $('.cartodb-zoom').width();
+    $('.cartodb-zoom').css({
+      position:"absolute",
+      top: 0,
+      left:  $(map_div).width() - (zoom_width*3)
+    });
+  
     // There are two layers, base layer(gmap) and cartodb layers
     // layers[1] is the cartodb layer created in the UI
     // and it has two sublayers (world_map, mapping_innovation)
     sublayers['region'] = layers[1].getSubLayer(0);
     sublayers['innovation'] = layers[1].getSubLayer(1);
 
-    var map_div = document.getElementById("map");
-  
     // First create the side filters
     var side_filters = createFilters();
     // Second populate the side menu with those filters
-    createToggleMenu("side_filters", "Filters", side_filters, map_div);
+    createToggleMenu("side_filters", null, side_filters, map_div);
+    // Add class for select filters
+    $('#region, #country').addClass('select-options');
 
     // Add classes to the elements
     addBootstrapClasses();
+
+    // Add color checkboxes
+    makeColorCheckboxes( ["q03a_sector_checkboxes"], sections[2].colors );
+    makeColorCheckboxes( ["q04_scale_checkboxes","q09_creators_checkboxes","q08_users_checkboxes"], null );
+   
 
     // Add an onchange event to the search box filter
     $( "#search" ).on( 'change', function(){
@@ -43,24 +57,8 @@ function initMap(){
       displayMapLayer('innovation', str );        
     });
        
-    // Shows/Hides the side filter menu
-    $('#menu_tab').on('click', function(){
-      $(this).toggleClass('slide-out');
-      // Check if its slide-out
-      if($(this).hasClass('slide-out')){
-        $('#side_filters').show();
-        var h = $('nav').height() + $('#top_filters').height();
-        var w = $('#side_filters').width() - 2;
-        $('#side_filters').height = h;
-        $(this).css('left', w);
-      }else{
-        $(this).css('left', '-1.5em');
-        $('#side_filters').hide();
-      }   
-    });
-    
     // Add onclick event to the <input> elements (checkboxes)
-    $('.checkbox-container input').on( 'click', function(e){
+    $('.checkbox_container input').on( 'click', function(e){
       data = getFormValues('all_checks_filter');
       query = constructSelectQuery(cartodb_tables[1], data, false, false );
       displayMapLayer('innovation', query );
@@ -128,6 +126,7 @@ function createFilters() {
   createSelectEle( "region", "unicef_region", region_values, docFrag );
   // Filter for Countries
   createSelectEle( "country", "q02_country", country_values, docFrag );
+
   // Filter for
   var checkboxes_filters = [
       sections[2],    // Primary Sector
@@ -164,4 +163,26 @@ function createGroupFilters( p_arrayOfFilters, p_separationEle ) {
     }
   }
   return docFrag;
+}
+
+/*Color Checkboxes*/
+function makeColorCheckboxes( p_sections, p_colors ){
+  for( var i=0; i < p_sections.length; i++ ){
+    // Create a div element - this will replace our original checkbox
+    var box = document.createElement("div");
+    box.setAttribute("class","box");
+    
+    var checkboxes = $("#"+p_sections[i]).find('.checkbox');
+    $(checkboxes).addClass('custom-checks');
+    
+    // Insert the .box container after the <input>
+    $(checkboxes).find('input:checkbox').after(box);
+
+    if( p_colors ){
+      // Add background color for the .box
+      $(checkboxes).find('.box').each(function(i){
+        $(this).css("background-color", p_colors[i]);
+      });
+    }
+  }
 }

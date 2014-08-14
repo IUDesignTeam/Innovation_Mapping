@@ -1,18 +1,4 @@
 #main_div {
-	padding:20px;
-	background-color:lightgray;
+	background-color:white;
 }
 
-p {margin:0;}
-p.title_par {font-weight:bold;}
-p.description_par {opacity:0.5;}
-p.error_par {color:red;}
-
-label input {margin-bottom: 10px;}
-ul {padding:0; list-style:none;}
-
-div.required .section-title:after {content:" *";color:red;}
-
-.validator-msg {
-	float: right;
-}
