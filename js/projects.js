@@ -10,7 +10,7 @@ function createProjectForm( p_formType, p_formEle ) {
   for( var i = 0; i < sections.length; i++ ){
 		var type = sections[i].input_type;
 		var title = sections[i].title;
-    var required = sections[i].required;
+    var req = sections[i].required;
 
 		// For name attribute use the same names as the cartoDB's column names
 		var name = sections[i].cartodb_field; 
@@ -27,9 +27,8 @@ function createProjectForm( p_formType, p_formEle ) {
     else if( type == "hidden" ){
       ele = createHiddenEle( name, value );
     }
-    // Add
-     'required'class to the element
-    if(required== true)  ele.className = "required";
+    // Add 'required'class to the element
+    if(req== true)  ele.className = "required";
 
     formInputs.appendChild( ele );
 	}// end of for loop

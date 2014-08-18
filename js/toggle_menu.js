@@ -55,3 +55,4 @@ function createToggleMenu( p_containerId, p_tabTitle, p_contents, p_parentEle ){
       }   
    // }
   });
+}
