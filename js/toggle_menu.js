@@ -22,14 +22,15 @@ function createToggleMenu( p_containerId, p_tabTitle, p_contents, p_parentEle ){
   // Tab
   var tab = document.createElement("div");
   tab.setAttribute("id","menu_tab");
-  tab.className = "tab-in";
 
   if(p_tabTitle){
     tab.appendChild( document.createTextNode(p_tabTitle) );
   }else{
     var arrow = document.createElement("div");
     arrow.id = "arrow";
+    arrow.className = "tab-in";
     tab.appendChild(arrow);
+    
   }
   side_menu.appendChild(tab);
   $(p_parentEle).prepend(side_menu);
@@ -41,18 +42,19 @@ function createToggleMenu( p_containerId, p_tabTitle, p_contents, p_parentEle ){
   $('#menu_tab').css({"top":h, "left":w });
 
   // Shows/Hides the side filter menu
-  $('#menu_tab').on('click', function(){
-    //if(e.target == e.currentTarget) {
-   //   console.log("target: "  + JSON.stringify(e.target.id) );
-      $(this).toggleClass('tab-in');
-      // Check if its slide-out
-      if($(this).hasClass('tab-in')){
-        $(this).css({ "left": 0, "margin-left": 0 });
-        $('#side_filters').hide();
-      }else{
-        $('#side_filters').show();
-        $(this).css('left', w);
-      }   
-   // }
+  $('#arrow').on('click', function(e){
+    e.stopPropagation();
+    
+    $('#arrow').toggleClass('tab-in');
+    $('#arrow').toggleClass('tab-out');
+    
+    // Check if its slide-out
+    if($('#arrow').hasClass('tab-in')){
+      $('#side_filters').show();
+      $('#menu_tab').css('left', w);
+    }else if( $('#arrow').hasClass('tab-out') ){
+      $('#side_filters').hide();
+      $('#menu_tab').css({ "left": 0, "margin-left": 0 });  
+    }   
   });
 }

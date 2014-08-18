@@ -36,11 +36,13 @@
 	position:absolute;
 	border-top: 10px solid transparent;
 	border-bottom: 10px solid transparent;
-	border-left: 10px solid black;
 	opacity:0.7;
 }
 
-#menu_tab .tab-in {
-	border-left: none !important;
+#arrow.tab-in {
 	border-right: 10px solid black;
+}
+
+#arrow.tab-out {
+	border-left: 10px solid black;
 }
