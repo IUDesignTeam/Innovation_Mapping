@@ -60,6 +60,7 @@
     if (isset($_SESSION['Username']) && isset($_SESSION['Password'])) {
       include 'includes/mysql_data.php';
       $con = mysqli_connect($mysql_host,$mysql_user,$mysql_pass,$mysql_db);
+      checkTimeout($con);
       
       //Add your projects, add project, and logout script
       array_push($links, "your_projects.php", "logout.php");
@@ -126,6 +127,72 @@ NAVBAR;
     if (!(isset($_SESSION['Username']) && isset($_SESSION['Password']))) {
       session_destroy();
       header("Location: login.php");
+    }
+  }
+
+  function checkTimeout($con) {
+    include 'includes/mysql_data.php';
+    if (isset($_SESSION['timeout']) && $_SESSION['timeout'] + 30 * 60 < time()) {
+      mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."', '".$_SERVER['REMOTE_ADDR']."', 'Timed Out')");
+      session_destroy();
+      header("Location: login.php");
+    } else {
+      $_SESSION['timeout'] = time();
+    }
+  }
+
+    function addProject() {
+    include 'includes/mysql_data.php';
+    //QUERY_STRING is the query after the '?' in the url
+    if (!empty($_SERVER["QUERY_STRING"])) {
+      $query = explode("%20", $_SERVER["QUERY_STRING"]);
+      //If there is QUERY_STRING, connect to mysql
+      $con = mysqli_connect($mysql_host, $mysql_user, $mysql_pass, $mysql_db);
+      if (mysqli_connect_errno()) {
+        echo "Error connecting to mysql: " . mysqli_connect_errno();
+      }
+      $regSession = array();
+      if ($_SESSION["Office"] != "Admin" && $_SESSION["Office"] != "HQ") {
+        $query[count($query)-3] = $_SESSION["Region"];
+        $regSession["Area"] = $_SESSION["Region"];
+      } else {
+        $regSession["Area"] = $_SESSION["Office"];
+      }
+      $regSession["cartodb_id"] = $query[count($query)-2];
+      //QUERY_STRING is separated by spaces (%20 in address bar) so turn into array based on spaces
+      //Find how many projects in log if old projects have same cartodb_id
+      $number = "SELECT count(*) AS `projNumber` FROM ".$project_backups." WHERE `cartodb_id`='".$query[count($query)-2]."'";
+      //Insert project info into log of old projects, including version (based on how many have already same cartodb_id)
+      $SQL = "INSERT INTO ".$project_backups." (`cartodb_id`, `Project Name`, `Country`, `Primary Sector`, `Other Sectors`, `Scale`, `Issue`, `Solution`, `Results`, `Target Users`, `Creators`, `Status`, `Links`, `Contacts`, `the_geom`, `cartodb_georef_status`, `tech_innovatio`, `created_at`, `updated_at`, `region`, `Version`) VALUES ('".$query[count($query)-2]."',";
+      //Add all values into SQL query string
+      for ($i = 0; $i < count($query)-2; $i++) {
+        //Replace single ' with '' and &20^ (placeholder for spaces) with an actual space
+        $SQL .= "'".str_replace("&20^"," ",str_replace("'","''",$query[$i]))."'";
+        $SQL .= ",";
+      }
+      //$numResult is query for the number of projects with same cartodb_id from old project table
+      $numResult = mysqli_query($con,$number);
+      //$data fethces associative array from $numResult, where this['projNumber'] is number of projects with same cartodb_id
+      $data = mysqli_fetch_assoc($numResult);
+      //$version is number of projects with same cartodb_id, plus 1, to indicate that this is the newest version to add to the projects log
+      $version = $data['projNumber'] + 1;
+      //Also the last column, so add last
+      $SQL .= $version;
+      //Add ending parenthesis for syntax
+      $SQL .= ")";
+      //Query the insert
+      mysqli_query($con,$SQL);
+      //The final item in the query array is true or false, based on whether we wanted to update or add project
+      if ($query[count($query)-1] == "true") $addOrUpdate = "Updated ";
+      else $addOrUpdate = "Added ";
+      $logSQL = "INSERT INTO ".$info."(`Username`,`IP Address`,`Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', '".$addOrUpdate." Project with id: ".$query[count($query)-2].", version: ".$version."')";
+      //Query insert
+      mysqli_query($con,$logSQL);
+      if ($query[count($query)-1]=="false") {
+        echo "<script>updateRegion(".json_encode($regSession).");</script>";
+      } else {
+        echo "<script>window.location.href = 'your_projects.php';</script>";
+      }
     }
   }
 

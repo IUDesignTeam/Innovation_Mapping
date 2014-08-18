@@ -79,7 +79,7 @@ function createProjectForm( p_formType, p_formEle ) {
           var msg_box = addParagraph(msg, "alert alert-info");
           $('#formInputs').before(msg_box);
           $(window).scrollTop(0);
-        });       
+        });
       });
     }
   });
@@ -90,6 +90,10 @@ function createProjectForm( p_formType, p_formEle ) {
     clearElement(this.parentNode.parentNode, true);
   });
 	addBootstrapClasses();
+}
+
+function redirect( p_obj ) {
+  console.log(p_obj);
 }
 
 /*
