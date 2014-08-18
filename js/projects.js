@@ -9,7 +9,7 @@ function createProjectForm( p_formType, p_formEle ) {
   
   for( var i = 0; i < sections.length; i++ ){
 		var type = sections[i].input_type;
-		var title = sections[i].title;
+		var title = i + ". " + sections[i].title;
     var req = sections[i].required;
     var media = sections[i].cartodb_media;
 
@@ -22,9 +22,9 @@ function createProjectForm( p_formType, p_formEle ) {
       ele = createTextField( name, type, title, desc );
 		}
 		else if( type == "checkbox" || type == "radio" ){
-			var value = sections[i].input_value;			 
+			var value = sections[i].input_value;			
+      console.log("Value: "+ value); 
       ele = createInputElements( name, type, title, value, desc );
-      //console.log("Value: " + value[le]);
       if( value[value.length-1] == "Other" ){
         var other_text = createTextField(name, "text",null, null);
         other_text.className = "checkbox";
@@ -35,7 +35,7 @@ function createProjectForm( p_formType, p_formEle ) {
       ele = createHiddenEle( name, value );
     }
     // Add 'required'class to the element
-    if(req== true)  ele.className = "required";
+    if(req== true)  $(ele).addClass("required");
 
     // Add a .cartodb_media class to later identify the input as a link
     if(media) $(ele).find('input').addClass("cartodb_media");
@@ -64,7 +64,7 @@ function createProjectForm( p_formType, p_formEle ) {
     $('input[name="unicef_region"]').val(user);
 
     // Validate the data
-    if(validateSubmitResults() ){
+    if( validateSubmitResults() ){
       // Get the address for the project
       var address = $('#q02_country').val();
       // Find the x,y points for that address
@@ -85,7 +85,7 @@ function createProjectForm( p_formType, p_formEle ) {
           var columnId = {"column":"cartodb_id", "value": $('#'+current_form).parent().attr('id')};
           query = constructUpdateQuery( cartodb_tables[1], data, columnId );
         }
-        console.log("QUERY: "+query);
+        //console.log("QUERY: "+query);
         // Post to CartoDB table
         postToCartoDB( query, function(){
           var msg = "Project has been added successfully";
@@ -93,7 +93,7 @@ function createProjectForm( p_formType, p_formEle ) {
           var msg_box = addParagraph(msg, "alert alert-info");
           $('#formInputs').before(msg_box);
           $(window).scrollTop(0);
-        });      
+        });    
       });
     } 
   });
@@ -310,8 +310,7 @@ function postToCartoDB( p_query, callback ){
   $.post( url, {"sql": p_query} )
 	.done(function(){
     callback();
-	})
-	.fail(function( jqxhr, textStatus, error ){
+  }).fail(function( jqxhr, textStatus, error ){
     var err = textStatus + ", " + error;
     console.log("Request Failed: " + err);  
 	});
@@ -366,6 +365,7 @@ constructSelectQuery - creates a select sql string that uses 'IN' command
   p_data      - (object) 
   p_selectAll - (boolean) true will select all the table results, 
                 while false will select specific results
+  p_keywords - (boolean) true will use 'ILIKE' false will use "IN"
 */
 function constructSelectQuery( p_table, p_data, p_selectAll, p_keyword ){
   // The # of properties there are in the object

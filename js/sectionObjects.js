@@ -25,27 +25,27 @@ var form_json = {"sections" : [
 		"required": true
 	},
 	{
-		"title": "Primary Sector",
-		"help_text": "Please select the primary sector",
-		"input_type": "radio",
-		"cartodb_field": "q03a_sector",
+		"title": "Focus Areas",
+		"help_text": "Please select all that applies.",
+		"input_type": "checkbox",
+		"cartodb_field": "q03b_sector",
 		"input_value": [
-			"Health", "HIV", "Nutrition", "WASH", "Education", "Child Protection", "Monitoring and Evaluation", "Supply", "Social Inclusion", "Emergency", "C4D", "Social Policy"
+			"Health", "HIV", "Nutrition", "WASH", "Education", "Child Protection", "Monitoring and Evaluation", "Supply", "Social Inclusion", "Emergency", "C4D", "Social Policy", "Other"
 		],
 		"required": true,
 		"colors": [
 			'#ff6600', '#850200', '#ff00ff', '#0099ff', '#136400', '#081b47', '#33ff00', '#9999cc', '#7b00b4', '#cc0066', '#990066'
-		]  
+		]
 	},
 	{
-		"title": "Other Sectors",
-		"help_text": "Please select any additional sector(s) if applicable",
+		"title": "Portfolio",
+		"help_text": "Please select all that apply.", 
 		"input_type": "checkbox",
-		"cartodb_field": "q03b_sector",
+		"cartodb_field": "portfolio",
 		"input_value": [
-			"Health", "HIV", "Nutrition", "Education", "Child Protection", "Social Inclusion", "Emergency", "C4D", "Social Policy", "Supply", "Monitoring and Evaluation", "Other"
+			"Youth Engagement", "Real-time Data", "Infrastructure"
 		],
-		"required": false
+		"required": true
 	},
 	{
 		"title": "Scale",
@@ -58,35 +58,14 @@ var form_json = {"sections" : [
 		"required": true
 	},
 	{
-		"title": "Issue",
-		"help_text": "What is the issue being addressed? (Limit response to 100 words, 50 words recommended).",
-		"input_type": "textarea",
-		"cartodb_field": "q05_issue",
-		"required": true
-	},
-	{
-		"title": "Solution",
-		"help_text": "What is the solution? What tools were used, i.e. RapidSMS, U-Report, etc.? Which partners or vendors are involved in the development?",
-		"input_type": "textarea",
-		"cartodb_field": "q06_solution",
-		"required": true
-	},
-	{
-		"title": "Results",
-		"help_text": "What are the results so far? (Limit response to 100 words, 50 words recommended).",
-		"input_type": "textarea",
-		"cartodb_field": "q07_results",
-		"required": true
-	},
-	{
 		"title": "Target Users",
 		"help_text": "Who are the target users for the solution?",
 		"input_type": "checkbox",
 		"cartodb_field": "q08_users",
 		"input_value": [
-			"UNICEF Staff", "Innovation Labs", "General Public", "Government/Ministries", "Multilateral Organizations", "N.G.O.s", "Frontline Workers", "Donors", "Other"
+			"End Beneficiaries", "Government Authorities", "Development Authorities", "Frontline Workers", "Donors",  "UNICEF Offices", "Other"
 		],
-		"required": true
+		"required": true 
 	},
 	{
 		"title": "Creators",
@@ -99,14 +78,95 @@ var form_json = {"sections" : [
 		"required": true
 	},
 	{
-		"title": "Status",
-		"help_text": "What is the current status of the project?",
-		"input_type": "radio",
-		"cartodb_field": "q10_status",
+		"title": "Issue",
+		"help_text": "What is the issue being addressed? (Limit response to 100 words, 50 words recommended).",
+		"input_type": "textarea",
+		"cartodb_field": "q05_issue",
+		"required": true 
+	},
+	{
+		"title": "Solution",
+		"help_text": "What is the solution?",
+		"input_type": "textarea",
+		"cartodb_field": "q06_solution",
+		"required": true 
+	},
+	{
+		"title": "What's the core software technology being used (if applicable)?",
+		"help_text": "Please chose from the list of software, or add your own.",
+		"input_type": "checkbox",
+		"cartodb_field": "software_tech",
 		"input_value": [
-			"Under Development (project is in planning phase)", "Active (project is active either in pilot, implementation, scaling stages)", "On Hold", "Decommissioned"
+			"Magpi", "AkvoFLOW", "Open Data Kit", "Commcare", "DevTrac", "RapidPro (formerly RapidSMS)", "Formhub", "RapidFTR", "DHIS 2", "CSPro", "DevInfo", "Other"
 		],
+		"required": false 
+	},
+	{
+		"title": "Which partners have you been working with?",
+		"help_text": "List all partners, such as government, NGO, academia and the private sector. Please separate your responses with commas.",
+		"input_type": "textarea",
+		"cartodb_field": "partners",
 		"required": true
+	},
+	{
+		"title": "Results",
+		"help_text": "What are the results so far? (Limit response to 100 words, 50 words recommended).",
+		"input_type": "textarea",
+		"cartodb_field": "q07_results",
+		"required": true
+	},
+	{
+		"title": "What kind of evaluation method is being utilized?",
+		"help_text": "What are the main indicators to evaluate results? (Limit response to 100 words, 50 words recommended).",
+		"input_type": "textarea",
+		"cartodb_field": "evaluation_method",
+		"required": true
+	},
+	{
+		"title": "Number of target users/beneficiaries impacted so far.",
+		"help_text": "Please only use numbers.",
+		"input_type": "text",
+		"cartodb_field": "current_num_of_target",
+		"required": true
+	},
+	{
+		"title": "Expected number of target users/beneficiaries impacted by the end of 2015.",
+		"help_text": "Please only use numbers.",
+		"input_type": "text",
+		"cartodb_field": "expected_num_of_target",
+		"required": true
+	},
+	{
+		"title": "Project start date",
+		"help_text": "(mm/dd/yyyy)",
+		"input_type": "text",
+		"cartodb_field": "start_date",
+		"required": true
+	},
+	{
+		"title": "Is the project ongoing?",
+		"help_text": "",
+		"input_type":"radio",
+		"input_value": [
+			"Yes", "No"
+		],
+		"cartodb_field": "ongoing",
+		"required": true
+	},
+	{
+		"title": "When is the project expected to conclude or be handed over?",
+		"help_text": "(mm/dd/yyyy)",
+		"input_type": "text",
+		"cartodb_field": "end_day",
+		"required": false
+	},
+	{
+		"title": "What's the estimated funding need for project to scale?",
+		"help_text": "Please state numrical amount in USD.",
+		"input_type": "text",
+		"cartodb_field": "estimated_funding",
+		"required": false
+
 	},
 	{
 		"title": "Links",
@@ -121,7 +181,7 @@ var form_json = {"sections" : [
 		"help_text": "List the email(s) of any contact person(s) . Please limit to 3 contacts.",
 		"input_type": "text",
 		"cartodb_field": "q12_contacts",
-		"required": true
+		"required": true 
 	},
 	{
 		"input_type": "hidden",

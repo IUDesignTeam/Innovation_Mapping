@@ -166,18 +166,19 @@ function createFilters() {
 
   // Filter for Portfolios
   var portfolio_div = document.createElement("div");
-  var port_values = [portfolios[0].portfolio, portfolios[1].portfolio, portfolios[2].portfolio];
-  var portEle = createInputElements( "portfolios", "radio", "Portfolios", port_values );
+  portfolio_div.id = "portfolio_checkboxes";
+  var port_values = [ portfolios[0].portfolio, portfolios[1].portfolio, portfolios[2].portfolio ];
+  var portEle = createInputElements( "portfolio", "radio", "Portfolio", port_values, null );
   portEle.className = "filter_container";
   portfolio_div.appendChild( portEle );
   docFrag.appendChild( portfolio_div );
 
   // Filter for
   var checkboxes_filters = [
-      sections[2],    // Primary Sector
+      sections[2],    // Focus Area (sector)
       sections[4],    // Scale 
-      sections[9],    // Created By 
-      sections[8]     // Created For 
+      sections[5],    // Created By 
+      sections[6]     // Created For (Target)
   ];   
   docFrag.appendChild( createGroupFilters(checkboxes_filters, null) );
   return docFrag;
@@ -198,7 +199,14 @@ function createGroupFilters( p_arrayOfFilters, p_separationEle ) {
   for( var i = 0; i < p_arrayOfFilters.length; i++ ){
     // Curent section filter
     var filter = p_arrayOfFilters[i];
-    var inputs = createInputElements( filter.cartodb_field, "checkbox", filter.title, filter.input_value );
+    var filter_values;
+     
+    if(filter.input_value[filter.input_value.length-1] == "Other"){
+      filter_values = filter.input_value.slice(0,filter.input_value.length-1 );
+    }else{
+      filter_values = filter.input_value;
+    } 
+    var inputs = createInputElements( filter.cartodb_field, "checkbox", filter.title, filter_values );
     inputs.className = "filter_container";
     group.appendChild( inputs );
 

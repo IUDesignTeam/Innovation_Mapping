@@ -34,7 +34,7 @@ function getFormValues( p_formId ){
 - Sanitizes the inputs
 */
 function validateSubmitResults() {
-	console.log("Calling from validata");
+	console.log("Calling from validator");
 	var validated; 
   // Select only the inputs that have a parent with a required class
   var required_fields = $('.required');
@@ -52,7 +52,8 @@ function validateSubmitResults() {
 		// For the checkbox/radio check the lenght of selected inputs,
 		// at least 1 needs to be selected for it to validate   
 		// And for the text, check that the value is not an empty string
- 		if( (field.length == 0) || !field.val() ){
+ 		if( (field.length <= 0) || !field.val() ){
+ 			console.log("Field length: " + field.length);
  			$(this).addClass('alert alert-warning');
  			var msg = addParagraph(msg_string, "validator-msg text-danger");
  			// Check if there is already an alert message class, 
@@ -65,7 +66,7 @@ function validateSubmitResults() {
  		else{
  			// Remove the alert classes and message
  			$(this).find('p.validator-msg').detach();
-      $(this).removeClass('alert alert-warning'); 
+      $(this).removeClass('alert-warning').removeClass('alert'); 
       validated = true;
  		}
  		// Sanitize the inputs values
@@ -74,6 +75,7 @@ function validateSubmitResults() {
  			field.val(answer);
  		}
  	});
+
 	return validated;
 }
 
@@ -90,7 +92,7 @@ function createTextField( inputName, type, fieldName, descriptionEle ){
 	// Create a div element to hold the elements
 	div_wrap = document.createElement( "div" );
 	
-	if(title){
+	if(fieldName){
 		title = document.createElement( "label" );
 		title.className ="section-title";
 		title.appendChild( document.createTextNode( fieldName.toUpperCase() ) );
@@ -122,9 +124,10 @@ createInputElements
 */
 function createInputElements( p_name, p_type, p_fieldName, p_values, p_desc ){
 	// Create a div element to group the checkboxes or radio buttons
+	console.log("TYPE: "  + p_type);
 	var group_div = document.createElement("div"); 
-	group_div.className = p_type + "_container";
-	group_div.id = p_name + "_checkboxes";
+	group_div.setAttribute("class", p_type + "_container");
+	//group_div.id = p_name + "_checkboxes";
 
 	var header = document.createElement( "label" );
 	header.className ="section-title";
