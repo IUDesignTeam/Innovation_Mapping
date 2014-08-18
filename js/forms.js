@@ -82,12 +82,10 @@ createTextField() - creates form's text filed input. (Bootstrap's format)
 	descriptionEle	- an element object (Helper text for the sections)
 */
 function createTextField( inputName, type, fieldName, descriptionEle ){
-	// Create a document fragment to hold the elements
-	var docFrag = document.createDocumentFragment(); 
+	// Create a div element to hold the elements
 	var div_wrap = document.createElement( "div" );
-	var title = document.createElement( "h5" );
+	var title = document.createElement( "label" );
 	title.className ="section-title";
-	//label.setAttribute( "for", inputName );
 	title.appendChild( document.createTextNode( fieldName.toUpperCase() ) );
 
 	var ele;
@@ -97,16 +95,13 @@ function createTextField( inputName, type, fieldName, descriptionEle ){
 	}
 	else if( type == "textarea" ){
 		ele = document.createElement( "textarea" );
-		//ele.setAttribute("rows","8");
-		//ele.setAttribute("cols","150");
 	}
 	ele.name = inputName;
 	// Append all the elements to the div wrapper
 	div_wrap.appendChild( title );
 	if( descriptionEle ) div_wrap.appendChild( descriptionEle );
 	div_wrap.appendChild ( ele );
-	docFrag.appendChild( div_wrap );
-	return docFrag;
+	return div_wrap;
 }
 
 
@@ -123,7 +118,7 @@ function createInputElements( p_name, p_type, p_fieldName, p_values, p_desc ){
 	group_div.className = p_type + "_container";
 	group_div.id = p_name + "_checkboxes";
 
-	var header = document.createElement( "h5" );
+	var header = document.createElement( "label" );
 	header.className ="section-title";
 	header.appendChild( document.createTextNode(p_fieldName.toUpperCase()) );
 	group_div.appendChild( header );
@@ -134,10 +129,8 @@ function createInputElements( p_name, p_type, p_fieldName, p_values, p_desc ){
 	for (var i = 0; i < p_values.length; i++) {
 		// Create a div element
 		var div_wrap = document.createElement( "div" );
-		div_wrap.className = p_type;  // ------ MAKE A FUNCTION FOR BOOTSTAP
-		// Create a label element
-		var label = document.createElement( "label" );
-
+		div_wrap.className = p_type;  
+		
 		// Create an input element
 		var input = document.createElement("input");
 		var input_id = p_name + "_" + i;
@@ -146,15 +139,42 @@ function createInputElements( p_name, p_type, p_fieldName, p_values, p_desc ){
 		input.setAttribute( "value", p_values[i] );
 		input.setAttribute( "id", input_id );
 
-		//label.appendChild( input );	
+		// Create a label element
+		var label = document.createElement( "label" );
 		label.setAttribute("for", input_id);
 		label.appendChild( document.createTextNode(p_values[i]) );
-		// append each element to the div_wrap
+
+		// Append each element to the div_wrap
 		div_wrap.appendChild( input );
 		div_wrap.appendChild( label );
 		group_div.appendChild( div_wrap );
 	} 
 	return group_div;
+}
+
+/*
+Color Checkboxes
+  p_colors array or null, the length needs to be the same length as the p_sections.length
+*/
+function customCheckboxes( p_sections, p_colors ){
+  for( var i=0; i < p_sections.length; i++ ){
+    // Create a div element - this will replace our original checkbox
+    var box = document.createElement("div");
+    box.setAttribute("class","box");
+    
+    var checkboxes = $("#"+p_sections[i]).find('.checkbox');
+    $(checkboxes).addClass('custom-checks');
+    
+    // Insert the .box container 
+	$(checkboxes).find('input:checkbox').after(box);
+
+    if( p_colors ){
+      // Add background color for the .box
+      $(checkboxes).find('.box').each(function(i){
+        $(this).css("background-color", p_colors[i]);
+      });
+    }
+  }
 }
 
 
@@ -174,10 +194,11 @@ function createHiddenEle( p_name, p_value ){
 /*
   createSelectEle() 
  */
-function createSelectEle( p_id, p_filterName, p_values, p_parentEle ){
+function createSelectEle( p_id, p_filterName, p_values, p_class, p_parentEle ){
   // Create a <div> element to hold one type of filter
   var filter_div = document.createElement("div");
-  filter_div.setAttribute("id", p_id);
+  filter_div.id = p_id;
+  filter_div.className = p_class;
   // Create a select element
   var select_ele = document.createElement("select");
   select_ele.setAttribute("name", p_filterName);
@@ -201,9 +222,10 @@ function createSelectEle( p_id, p_filterName, p_values, p_parentEle ){
 /*
 	createSearchInput()
 */
-function createSearchInput( p_parentEle, p_placeholder ){
+function createSearchInput( p_parentEle, p_class, p_placeholder ){
 	// div for search
   var search_div = document.createElement( "div" );
+  search_div.setAttribute( "class", p_class );
   var input = document.createElement( "input" );
   input.setAttribute( "type", "text" );
   input.setAttribute( "id", "search" );

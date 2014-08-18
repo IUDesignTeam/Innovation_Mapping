@@ -1,10 +1,25 @@
 #map {
-	height: 45em;
+	height: 100%;
 	position: inherit;
 	width: 100%;
 }
 
-#search, div.select-options select {
+.filter_group {
+	margin-top: 5px;
+	margin-left: 0.5em;
+	margin-top: 2em;
+	border-bottom: 1px dashed grey;
+}
+
+.filter_container {
+	margin-bottom: 1em;
+}
+
+.section-title {
+	font-weight: 700; 
+}
+
+#search, #resetFilters {
 	width: 95%;
 }
 
@@ -19,20 +34,11 @@
 	font-weight: 300; 
 }
 
-div.select-options select{
-	margin: 2px;
-	border: 1px solid gray;
-}
-
 #resetFilters {
-	background:none; 
-	border:none; 
-	color:gray; 
-	opacity:0.7; 
-	margin-top: 0.5em;
-	margin-bottom: 1em;
-}
-
-.section-title {
-	font-weight: 700; 
+	background: none; 
+	border: 0; 
+	color: #808080; 
+	opacity: 0.7; 
+	padding-bottom: 1em;
+	text-align: left;
 }

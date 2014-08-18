@@ -1,4 +1,4 @@
-body, html {
+body, html, #main_div {
   height: 100%;
 }
 
@@ -45,7 +45,7 @@ ul.nav {
   width: 100%;
 }
 
-#main_div, #main_div .row /*, .center-block*/ {
+#main_div, #main_div .row {
   height: 100%;
 }
 
@@ -54,64 +54,4 @@ ul.nav {
   box-shadow: 0px 1px 1px 1px #888888;
   padding-bottom: 3em;
   height: 100%;
-}
-
-/* Form Styles */
-#formInfo {
-  margin-bottom: 2em;
-}
-
-.section-title{
-  font-weight: bold;
-}
-
-.required .section-title:after {
-  content: " *";
-  color: red;
-}
-
-.required {
-  margin-bottom: 2em;
-}
-
-.checkbox, .radio{
-  padding-left: 2em;
-}
-.checkbox label, .radio label {
-  padding: 0;
-}
-
-.validator-msg {
-  float: right;
-}
-
-.help-block {
-  font-weight: 300;
-}
-
-/* Log In Page  */
-#login {
-  width: 23em;
-  height: 15em;
-  margin-top: 10em;
-}
-
-#login h4 {
-  text-align: center;
-  margin-bottom: 1em;
-  color: #7b7b7b;
-}
-
-#login .form-group {
-  float: right;
-  color: #adadad;
-}
-
-.btn {
-  background-color: black;
-  opacity: 0.7;
-  color: #fff;
-  position: relative;
-  float: right;
-  margin-left: 1em;
 }

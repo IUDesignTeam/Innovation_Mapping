@@ -1,6 +1,9 @@
 #table-wrap {
 	padding: 1em 0;
 }
+.center-block {
+	height: 100%;
+}
 
 #tableInfo {
 	padding-left: 2em;

@@ -39,6 +39,10 @@ function initMap(){
     var side_filters = createFilters();
     // Second populate the side menu with those filters
     createToggleMenu("side_filters", null, side_filters, map_div);
+
+    // Select the children of the #side_menu add a class
+    //$('#side_filters').children('div').addClass('filter_group');
+
     // Add class for select filters
     $('#region, #country').addClass('select-options');
 
@@ -46,22 +50,28 @@ function initMap(){
     addBootstrapClasses();
 
     // Add color checkboxes
-    makeColorCheckboxes( ["q03a_sector_checkboxes"], sections[2].colors );
-    makeColorCheckboxes( ["q04_scale_checkboxes","q09_creators_checkboxes","q08_users_checkboxes"], null );
-   
-
+    customCheckboxes( ["q03a_sector_checkboxes"], sections[2].colors );
+    customCheckboxes( ["q04_scale_checkboxes","q09_creators_checkboxes","q08_users_checkboxes", "portfolios_checkboxes"], null );
     // Add an onchange event to the search box filter
     $( "#search" ).on( 'change', function(){
       var str = searchKeyword( cartodb_tables[1], this.value, search_field );  // chamge to fields
       displayMapLayer('region', constructSelectQuery(cartodb_tables[0],null,true,false) );
       displayMapLayer('innovation', str );        
     });
-       
+      
     // Add onclick event to the <input> elements (checkboxes)
     $('.checkbox_container input').on( 'click', function(e){
-      data = getFormValues('all_checks_filter');
+      var parentId = $(this).parent().parent().parent().attr('id');
+      console.log("ID: " + parentId);
+      if( parentId == "portolios_filter" ){
+        //data = getFormValues('all_checks_filter');
+      }else if ( parentId == "all_checks_filter" ){
+        data = getFormValues( parentId );
+        console.log("yes");
+      } 
       query = constructSelectQuery(cartodb_tables[1], data, false, false );
       displayMapLayer('innovation', query );
+      console.log("QUERY: "  + query);
     });
 
     // Add onclick to select drop down
@@ -117,16 +127,30 @@ function resetFilters(){
 function createFilters() {
   // Create the content (filters)
   var docFrag = document.createDocumentFragment();
-    
+
   // Filter for Search box
-  createSearchInput( docFrag, "Search for keywords..." );
+  var search_div = document.createElement("div");
+  createSearchInput( search_div, "filter_container", "Search for keywords..." );
+  docFrag.appendChild(search_div);
+
   // Create a reset button
   docFrag.appendChild(createButton("resetFilters", "reset", "x Clear Filters")); //p_class = "btn btn-default"
+/*  
   // Filter for Regions
-  createSelectEle( "region", "unicef_region", region_values, docFrag );
+  var location_div = document.createElement("div");
+  createSelectEle( "region", "unicef_region", region_values, "filter_container", location_div );
   // Filter for Countries
-  createSelectEle( "country", "q02_country", country_values, docFrag );
-
+  createSelectEle( "country", "q02_country", country_values, "filter_container", location_div );
+  docFrag.appendChild(location_div);
+*/
+/*  // Filter for Portfolios
+  var portfolio_div = document.createElement("div");
+  var port_values = [portfolios[0].portfolio, portfolios[1].portfolio, portfolios[2].portfolio];
+  var portEle = createInputElements( "portfolios", "checkbox", "Portfolios", port_values );
+  portEle.className = "filter_container";
+  portfolio_div.appendChild( portEle );
+  docFrag.appendChild( portfolio_div );
+*/
   // Filter for
   var checkboxes_filters = [
       sections[2],    // Primary Sector
@@ -134,11 +158,10 @@ function createFilters() {
       sections[9],    // Created By 
       sections[8]     // Created For 
   ];   
-  var checkboxes_wrap = document.createElement("div");
-  checkboxes_wrap.id = "all_checks_filter";
-  var group =  createGroupFilters(checkboxes_filters, "hr");
-  checkboxes_wrap.appendChild( group );
-  docFrag.appendChild( checkboxes_wrap );
+
+  //var group =  createGroupFilters(checkboxes_filters, null);
+  //others_filters.appendChild( group );
+  docFrag.appendChild( createGroupFilters(checkboxes_filters, null) );
   return docFrag;
 }
 
@@ -150,39 +173,23 @@ createGroupFilters
 */
 function createGroupFilters( p_arrayOfFilters, p_separationEle ) {
   // Create the content (filters)
-  var docFrag = document.createDocumentFragment();
+  var group = document.createElement("div");
+  group.className = "filter_group";
+
   for( var i = 0; i < p_arrayOfFilters.length; i++ ){
     // Curent section filter
     var filter = p_arrayOfFilters[i];
     var inputs = createInputElements( filter.cartodb_field, "checkbox", filter.title, filter.input_value );
-    docFrag.appendChild( inputs );
-    // element that seperates each section of inputs
-    if(i < p_arrayOfFilters.length-1){
-      var sepEle = document.createElement(p_separationEle);
-      docFrag.appendChild(sepEle);
+    inputs.className = "filter_container";
+    group.appendChild( inputs );
+
+    if (p_separationEle){
+      // Element that seperates each section of inputs
+      if(i < p_arrayOfFilters.length-1){
+        var sepEle = document.createElement(p_separationEle);
+        group.appendChild(sepEle);
+      }
     }
   }
-  return docFrag;
-}
-
-/*Color Checkboxes*/
-function makeColorCheckboxes( p_sections, p_colors ){
-  for( var i=0; i < p_sections.length; i++ ){
-    // Create a div element - this will replace our original checkbox
-    var box = document.createElement("div");
-    box.setAttribute("class","box");
-    
-    var checkboxes = $("#"+p_sections[i]).find('.checkbox');
-    $(checkboxes).addClass('custom-checks');
-    
-    // Insert the .box container after the <input>
-    $(checkboxes).find('input:checkbox').after(box);
-
-    if( p_colors ){
-      // Add background color for the .box
-      $(checkboxes).find('.box').each(function(i){
-        $(this).css("background-color", p_colors[i]);
-      });
-    }
-  }
+  return group;
 }

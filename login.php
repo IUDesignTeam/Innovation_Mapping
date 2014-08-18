@@ -7,6 +7,7 @@
     createHeader();
     confirmLogin();
   ?>
+  <link rel="stylesheet" type="text/css" href="css/form_style.css">
  </head>
 <body>
   <?php createNavigation("Log In"); ?>

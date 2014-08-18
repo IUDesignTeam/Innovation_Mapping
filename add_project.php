@@ -12,11 +12,12 @@
   <script src="js/forms.js"></script>
   <script src="js/innovation_map.js"></script>
   <script src="js/projects.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/form_style.css">
 </head>
 <body onload="createProjectForm( 'add', document.getElementById('addProjForm') );">
   <?php 
     createNavigation("Add Project");
-   // confirmSession();
+    confirmSession();
   ?>
   <div id="main_div" class="container-fluid"> 
     <div class="row">  

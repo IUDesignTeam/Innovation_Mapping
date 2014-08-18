@@ -56,23 +56,25 @@
   function createNavigation($active) {
     session_start();
     //Initialize array of links and link names, innovation_map and about will be on all pages, so initialize array with those links
-    $links = array("index.php", "about.php");
-    $link_names = array("Home","About");
+    $links = array("index.php", "about.php", "add_project.php");
+    $link_names = array("Home", "About", "Add Project");
     //If session is set, add all links for logged in people
     if (isset($_SESSION['Username']) && isset($_SESSION['Password'])) {
       include 'includes/mysql_data.php';
       $con = mysqli_connect($mysql_host,$mysql_user,$mysql_pass,$mysql_db);
+      
       //Add your projects, add project, and logout script
-      $links[2] = "your_projects.php"; $links[3] = "add_project.php"; $links[4] = "logout.php";
-      $link_names[2] = "Your Projects"; $link_names[3] = "Add Project"; $link_names[4] = "Log Out";
-      if ($_SESSION['Office']=="Admin") {
+      array_push($links, "your_projects.php", "logout.php");
+      array_push($link_names, "Your Projects","Log Out");
+      
+     /* if ($_SESSION['Office']=="Admin") {
         $link_names[5] = "Admin"; $links[5] = "#admin";
-      }
+      }*/
       mysqli_query($con,"INSERT INTO ".$info." VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'On Page".$_SERVER['PHP_SELF']."')");
     } else {
       //If session not set, only add log in link
-      $links[2] = "login.php";
-      $link_names[2] = "Log In";
+      array_push($links, "login.php");
+      array_push($link_names,"Log In");
     }
     //Echo navbar style class items
     $nav_menu = <<<NAVBAR
@@ -112,13 +114,9 @@ NAVBAR;
     $session['Office'] = $_SESSION['Office'];
     $session['Region'] = $_SESSION['Region'];
     $session['Country'] = $_SESSION['Country'];
-#   echo "<script>console.log(".json_encode($session).");</script>";
-#   echo "<script>createTable(".json_encode($session).");</script>";
-//++++++++++++++++++++++++++ NEW ++++++++++++++++++++++++++++++++ 
-  $script = "<script>getOfficeProjects(".json_encode($session).");</script>";
-  echo $script;
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    //Fetch a numerical array with all the rows returned from result query
+
+    $script = "<script>getOfficeProjects(".json_encode($session).");</script>";
+    echo $script;
   }
 
   function confirmSession() {

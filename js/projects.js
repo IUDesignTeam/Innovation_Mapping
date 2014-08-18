@@ -10,6 +10,8 @@ function createProjectForm( p_formType, p_formEle ) {
   for( var i = 0; i < sections.length; i++ ){
 		var type = sections[i].input_type;
 		var title = sections[i].title;
+    var required = sections[i].required;
+
 		// For name attribute use the same names as the cartoDB's column names
 		var name = sections[i].cartodb_field; 
 		var desc = addParagraph( sections[i].help_text, "help-block" );
@@ -25,6 +27,10 @@ function createProjectForm( p_formType, p_formEle ) {
     else if( type == "hidden" ){
       ele = createHiddenEle( name, value );
     }
+    // Add
+     'required'class to the element
+    if(required== true)  ele.className = "required";
+
     formInputs.appendChild( ele );
 	}// end of for loop
 
@@ -34,14 +40,6 @@ function createProjectForm( p_formType, p_formEle ) {
   p_formEle.appendChild( createButton("cancel_prj", "button", "Cancel", "btn btn-default") );
 	// Add Project Button
 	p_formEle.appendChild( createButton( p_formType+"_prj", "submit", upperCase(p_formType)+" Project", "btn btn-default") );
-  
-  // Add a required class to all except q03b_sector
-  $('.section-title').each(function() {
-    console.log("Parent: " + $(this).parent()[0].id);
-    if($(this).parent()[0].id != "q03b_sector-checkboxes") {
-      $(this).parent().addClass('required');
-    }
-  });
   
   // Add an event to cancel button
   $('#cancel_prj').on('click', function(){
@@ -54,31 +52,37 @@ function createProjectForm( p_formType, p_formEle ) {
     e.preventDefault();
     // Validate the data
     if(    validateSubmitResults() ){
-    // Get the address for the project
-    var address = $('#q02_country').val();
-    // Find the x,y points for that address
-    geocode(address, function(location){
-      // Conver the points to cartodb format
-      var cartodb_geo = cartodbGeoLocation(location);
-      // Set the value of the hidden field 
-      $('input[name="the_geom"]').val( cartodb_geo );
-      // Get form data
-      var current_form = $('form')[0].id;
-      var data = getFormValues(current_form);
-     
-      var query;
-      if( current_form == "addProjForm" ){
-        query = constructInsertQuery( cartodb_tables[1], data );
-      } 
-      else if( current_form == "updateProjForm" ){ 
-        var columnId = {"column":"cartodb_id", "value": $('#'+current_form).parent().attr('id')};
-        query = constructUpdateQuery( cartodb_tables[1], data, columnId );
-      }
-      console.log("QUERY: "+query);
-      // Post to CartoDB table
-      postToCartoDB( query );       
-    });
-  }
+      // Get the address for the project
+      var address = $('#q02_country').val();
+      // Find the x,y points for that address
+      geocode(address, function(location){
+        // Conver the points to cartodb format
+        var cartodb_geo = cartodbGeoLocation(location);
+        // Set the value of the hidden field 
+        $('input[name="the_geom"]').val( cartodb_geo );
+        // Get form data
+        var current_form = $('form')[0].id;
+        var data = getFormValues(current_form);
+       
+        var query;
+        if( current_form == "addProjForm" ){
+          query = constructInsertQuery( cartodb_tables[1], data );
+        } 
+        else if( current_form == "updateProjForm" ){ 
+          var columnId = {"column":"cartodb_id", "value": $('#'+current_form).parent().attr('id')};
+          query = constructUpdateQuery( cartodb_tables[1], data, columnId );
+        }
+        console.log("QUERY: "+query);
+        // Post to CartoDB table
+        postToCartoDB( query, function(){
+          var msg = "Project has been added successfully";
+          // Add a success message   
+          var msg_box = addParagraph(msg, "alert alert-info");
+          $('#formInputs').before(msg_box);
+          $(window).scrollTop(0);
+        });       
+      });
+    }
   });
 
   // Add an event to cancel button
@@ -118,14 +122,11 @@ function createTable( p_rows ) {
       if( j < td_data.length ){
         // Conver the time stamp using moment.js library
         cellData = ( (td_data[j] == "updated_at") ? moment(project[td_data[j]]).format("YYYY-MM-DD") : project[td_data[j]] );
-        td = document.createTextNode(cellData);
-//---------------------------------------------------   
-// SORTABLE 
-        //td.setAttribute("data-value", j);
-//---------------------------------------------------        
+        td = document.createTextNode(cellData);       
       }else{
         // Create update link 
-        td = createLink( "#update", "update", "Update"  );        
+        td = createLink( "#update", "update", "Update"  ); 
+      
       }
       newCell.appendChild( td );
       newCell.setAttribute("data-value", j);
@@ -151,13 +152,19 @@ function createTable( p_rows ) {
     p_row - the refrence to the element not the id
 */
 function attachForm( p_row ) {
+  // Clear out an old form if there was 
+  clearElement($('#projUpdate'), true);
+
+  // Create the form element 
   var form_ele = document.createElement("form");
   form_ele.setAttribute("id","updateProjForm"); 
-  p_row.innerHTML = "";
-  p_row.appendChild(form_ele);
 
+  // Insert a new row after the one that 
+  $(p_row).after("<tr id='projUpdate'><td colspan='6'></td></tr>");
+   $('#projUpdate').find('td').append(form_ele);
+  
   createProjectForm('update', form_ele);
- 
+
   var obj = {"cartodb_id": [p_row.id]};
   var query = constructSelectQuery(cartodb_tables[1], obj, false );
   getFromCartoDB( query, fillInForm ); 
@@ -178,7 +185,6 @@ function fillInForm( p_project ) {
       this.value = prj[this.name];
     }
   });
-  console.log(prj);
 }
 
 /*
@@ -265,7 +271,7 @@ function geocode( p_address, callback ){
 */
 function getFromCartoDB( p_query, callback ){
 	var rows_obj;
-  var url =  "http://localhost:81/Innovation_Mapping/proxy.php?sql=" + encodeURI(p_query) + "&callback=?";
+  var url =  "./proxy.php?sql=" + encodeURI(p_query) + "&callback=?";
 
   $.getJSON( url, {format: "json"})
   .done(function(data){
@@ -281,14 +287,11 @@ function getFromCartoDB( p_query, callback ){
 /*
 	postToCartoDB()
 */
-function postToCartoDB( p_query ){	
-	var url = "http://localhost:81/Innovation_Mapping/proxy.php"; 
+function postToCartoDB( p_query, callback ){	
+	var url = "./proxy.php"; 
   $.post( url, {"sql": p_query} )
 	.done(function(){
-	   var msg = "Project has been added successfully";
-    // Add a success message   
-    var msg_box = addParagraph(msg, "alert alert-info");
-    $('#formInputs').before(msg_box);
+    callback();
 	})
 	.fail(function( jqxhr, textStatus, error ){
     var err = textStatus + ", " + error;
@@ -313,7 +316,6 @@ function getOfficeProjects( p_sessionObj ){
     }else{
       tempString = constructSelectQuery( cartodb_tables[1], null, true, false );
     }
-    console.log(tempString);
     getFromCartoDB( tempString,  createTable );
 }
 
@@ -371,6 +373,7 @@ function constructSelectQuery( p_table, p_data, p_selectAll, p_keyword ){
       }    
     }
   }
+  console.log("Query: " + sql);
   return sql;
 }
 

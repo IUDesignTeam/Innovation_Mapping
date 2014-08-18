@@ -15,12 +15,14 @@ var form_json = {"sections" : [
 		"help_text": "What is the name of the project?",
 		"input_type": "text",
 		"cartodb_field": "q01_project",
+		"required": true
 	},
 	{
 		"title": "Country",
 		"help_text": "Please indicate the country office using the format: City, Country: Addis Adaba, Ethiopia",
 		"input_type": "text",
-		"cartodb_field": "q02_country"
+		"cartodb_field": "q02_country",
+		"required": true
 	},
 	{
 		"title": "Primary Sector",
@@ -30,6 +32,7 @@ var form_json = {"sections" : [
 		"input_value": [
 			"Health", "HIV", "Nutrition", "WASH", "Education", "Child Protection", "Monitoring and Evaluation", "Supply", "Social Inclusion", "Emergency", "C4D", "Social Policy"
 		],
+		"required": true,
 		"colors": [
 			'#ff6600', '#850200', '#ff00ff', '#0099ff', '#136400', '#081b47', '#33ff00', '#9999cc', '#7b00b4', '#cc0066', '#990066'
 		]  
@@ -41,7 +44,8 @@ var form_json = {"sections" : [
 		"cartodb_field": "q03b_sector",
 		"input_value": [
 			"Health", "HIV", "Nutrition", "Education", "Child Protection", "Social Inclusion", "Emergency", "C4D", "Social Policy", "Supply", "Monitoring and Evaluation", "Other"
-		]
+		],
+		"required": false
 	},
 	{
 		"title": "Scale",
@@ -50,25 +54,29 @@ var form_json = {"sections" : [
 		"cartodb_field": "q04_scale",
 		"input_value": [
 			"Prototype", "Sub-National", "National", "Multi-National", "Multi-Regional"
-		]
+		],
+		"required": true
 	},
 	{
 		"title": "Issue",
 		"help_text": "What is the issue being addressed? (Limit response to 100 words, 50 words recommended).",
 		"input_type": "textarea",
-		"cartodb_field": "q05_issue"
+		"cartodb_field": "q05_issue",
+		"required": true
 	},
 	{
 		"title": "Solution",
 		"help_text": "What is the solution? What tools were used, i.e. RapidSMS, U-Report, etc.? Which partners or vendors are involved in the development?",
 		"input_type": "textarea",
-		"cartodb_field": "q06_solution"
+		"cartodb_field": "q06_solution",
+		"required": true
 	},
 	{
 		"title": "Results",
 		"help_text": "What are the results so far? (Limit response to 100 words, 50 words recommended).",
 		"input_type": "textarea",
-		"cartodb_field": "q07_results"
+		"cartodb_field": "q07_results",
+		"required": true
 	},
 	{
 		"title": "Target Users",
@@ -77,7 +85,8 @@ var form_json = {"sections" : [
 		"cartodb_field": "q08_users",
 		"input_value": [
 			"UNICEF Staff", "Innovation Labs", "General Public", "Government/Ministries", "Multilateral Organizations", "N.G.O.s", "Frontline Workers", "Donors", "Others"
-		]
+		],
+		"required": true
 	},
 	{
 		"title": "Creators",
@@ -86,7 +95,8 @@ var form_json = {"sections" : [
 		"cartodb_field": "q09_creators",
 		"input_value": [
 			"UNICEF Staff", "Innovation Labs", "Government/Ministrires", "Multilateral Organizations", "Academia", "N.G.O.s", "Private Sector Organizations", "Other"
-		]
+		],
+		"required": true
 	},
 	{
 		"title": "Status",
@@ -95,22 +105,29 @@ var form_json = {"sections" : [
 		"cartodb_field": "q10_status",
 		"input_value": [
 			"Under Development (project is in planning phase)", "Active (project is active either in pilot, implementation, scaling stages)", "On Hold", "Decommissioned"
-		]
+		],
+		"required": true
 	},
 	{
 		"title": "Links",
 		"help_text": "Links to any websites / media / awards / collaterals. Please separate your responses with commas.",
 		"input_type": "text",
-		"cartodb_field": "q11_links"
+		"cartodb_field": "q11_links",
+		"required": false
 	},
 	{
 		"title": "Contacts",
 		"help_text": "List the email(s) of any contact person(s) . Please limit to 3 contacts.",
 		"input_type": "text",
-		"cartodb_field": "q12_contacts"
+		"cartodb_field": "q12_contacts",
+		"required": true
 	},
 	{
 		"input_type": "hidden",
 		"cartodb_field": "the_geom"
+	},
+	{
+		"input_type": "hidden",
+		"cartodb_field": "unicef_region"
 	}
 ]};

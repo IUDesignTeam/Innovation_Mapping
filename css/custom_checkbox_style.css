@@ -1,11 +1,11 @@
-.checkbox {
+.custom-checks {
 	width: 100%;
-	padding-left: 0;
+	padding-left: 5px;
 }
 
-.checkbox label {
- 	font-size: 12px;
- 	padding-left: .5em;	
+.custom-checks label {
+ 	font-size: 1em;
+ 	padding-left: 5px;	
 }
 
 .custom-checks input[type=checkbox] {
@@ -13,22 +13,23 @@
 	visibility: hidden;
 }
 
-div.box, .checkbox label {
+.box, .custom-checks label {
 	position: relative;
 	float: left;
 }
 
-div.box {
+.custom-checks .box {
+	width: 1em;
+	height: 1em;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+	margin-top: 3px;
+	background-color: #858585;
 	cursor: pointer;
-	width: 13px;
-	height: 13px;
-	background-color: grey;
-	margin-top: 2px;
-	margin-left: 1em;
-	border-radius: 140px;
 }
 
-.custom-checks div.box:after {
+.custom-checks .box::after {
 	opacity: 0.2;
 	content: '';
 	position: absolute;
@@ -41,18 +42,17 @@ div.box {
 	border-top: none;
 	border-right: none;
 	z-index: 20;
-	
 	-webkit-transform: rotate(-45deg);
 	-moz-transform: rotate(-45deg);
 	-o-transform: rotate(-45deg);
 	-ms-transform: rotate(-45deg);
 	transform: rotate(-45deg);
 }
-.custom-checks input[type=checkbox]:checked + div.box:after {
+.custom-checks input[type=checkbox]:checked + .box::after {
 	opacity: 1;
 }
 
-div.box:after {
+.box::after {
 	cursor:pointer;
 	opacity: 1;
 }

@@ -6,16 +6,14 @@
     include 'php_util/util.php'; 
     createHeader(); 
   ?>
-  <!-- sortable.js for sorting table data -->
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/sortable/0.6.0/js/sortable.min.js"></script>
   <script src="js/variables.js"></script>
   <script src="js/sectionObjects.js"></script>
   <script src="js/helpers.js"></script>
   <script src="js/forms.js"></script>
-  <script src="js/innovation_map.js"></script>
   <script src="js/projects.js"></script>
 
   <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/sortable/0.6.0/css/sortable-theme-bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="css/form_style.css">
   <link rel="stylesheet" type="text/css" href="css/your_projects_style.css">
 </head>
 <body> 
@@ -52,6 +50,7 @@
     </div>
   </div>
   <?php jsDocuments(); ?>
-
+  <!-- sortable.js for sorting table data -->
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/sortable/0.6.0/js/sortable.min.js"></script>
 </body>
 </html>

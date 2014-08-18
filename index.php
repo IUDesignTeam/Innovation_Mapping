@@ -10,11 +10,11 @@
     <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" /> 
     <link rel="stylesheet" type="text/css" href="css/innovation_map_style.css">
     <link rel="stylesheet" type="text/css" href="css/toggle_menu_style.css">
-    <link rel="stylesheet" type="rext/css" href="css/color_checkbox_style.css">
+    <link rel="stylesheet" type="text/css" href="css/custom_checkbox_style.css">
 </head>
 <body onload="initMap();">
   <?php createNavigation("Home"); ?>
-  <div class="container-fluid">
+  <div id="main_div" class="container-fluid">
     <div class="row">
       <div id="map"></div>
     </div>
