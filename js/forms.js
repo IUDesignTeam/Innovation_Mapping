@@ -15,10 +15,14 @@ function getFormValues( p_formId ){
 	for( var i=0; i<form_answers.length; i++){
 		// Current answer
 		var ans = form_answers[i];
-		if( !answers.hasOwnProperty(ans.name) ){
-			answers[ans.name] = [ans.value];
-		}else{
-			answers[ans.name].push(ans.value);
+		var ans_val = ans.value;
+
+		if(ans_val != "Other"){
+			if( !answers.hasOwnProperty(ans.name) ){
+				answers[ans.name] = [ans.value];
+			}else{
+				answers[ans.name].push(ans.value);
+			}
 		}
 	}
 	return answers;
@@ -82,13 +86,17 @@ createTextField() - creates form's text filed input. (Bootstrap's format)
 	descriptionEle	- an element object (Helper text for the sections)
 */
 function createTextField( inputName, type, fieldName, descriptionEle ){
+	var div_wrap, title, ele;
 	// Create a div element to hold the elements
-	var div_wrap = document.createElement( "div" );
-	var title = document.createElement( "label" );
-	title.className ="section-title";
-	title.appendChild( document.createTextNode( fieldName.toUpperCase() ) );
+	div_wrap = document.createElement( "div" );
+	
+	if(title){
+		title = document.createElement( "label" );
+		title.className ="section-title";
+		title.appendChild( document.createTextNode( fieldName.toUpperCase() ) );
+		div_wrap.appendChild( title );
+	}
 
-	var ele;
 	if( type == "text" ){
 		ele = document.createElement( "input" );
 		ele.id = inputName;
@@ -97,8 +105,8 @@ function createTextField( inputName, type, fieldName, descriptionEle ){
 		ele = document.createElement( "textarea" );
 	}
 	ele.name = inputName;
+
 	// Append all the elements to the div wrapper
-	div_wrap.appendChild( title );
 	if( descriptionEle ) div_wrap.appendChild( descriptionEle );
 	div_wrap.appendChild ( ele );
 	return div_wrap;

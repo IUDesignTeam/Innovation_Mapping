@@ -84,7 +84,7 @@ var form_json = {"sections" : [
 		"input_type": "checkbox",
 		"cartodb_field": "q08_users",
 		"input_value": [
-			"UNICEF Staff", "Innovation Labs", "General Public", "Government/Ministries", "Multilateral Organizations", "N.G.O.s", "Frontline Workers", "Donors", "Others"
+			"UNICEF Staff", "Innovation Labs", "General Public", "Government/Ministries", "Multilateral Organizations", "N.G.O.s", "Frontline Workers", "Donors", "Other"
 		],
 		"required": true
 	},
@@ -113,7 +113,8 @@ var form_json = {"sections" : [
 		"help_text": "Links to any websites / media / awards / collaterals. Please separate your responses with commas.",
 		"input_type": "text",
 		"cartodb_field": "q11_links",
-		"required": false
+		"required": false,
+		"cartodb_media": true
 	},
 	{
 		"title": "Contacts",

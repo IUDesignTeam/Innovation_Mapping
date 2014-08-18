@@ -58,7 +58,7 @@ function addBootstrapClasses(){
 function sanitizeString( p_string ){
   // Replace script and html tags
   var str = p_string.replace(/<script>.*<\/script>/g, "");
-  str.replace(/<(.*?)>/g, "");
+  str.replace(/<[^>]*>?/g, "");
   // Replace sql commannds if any
   str.replace(/DROP/gi, "");
   str.replace(/;/g, ",");

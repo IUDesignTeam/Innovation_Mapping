@@ -11,6 +11,7 @@ function createProjectForm( p_formType, p_formEle ) {
 		var type = sections[i].input_type;
 		var title = sections[i].title;
     var req = sections[i].required;
+    var media = sections[i].cartodb_media;
 
 		// For name attribute use the same names as the cartoDB's column names
 		var name = sections[i].cartodb_field; 
@@ -23,12 +24,21 @@ function createProjectForm( p_formType, p_formEle ) {
 		else if( type == "checkbox" || type == "radio" ){
 			var value = sections[i].input_value;			 
       ele = createInputElements( name, type, title, value, desc );
+      //console.log("Value: " + value[le]);
+      if( value[value.length-1] == "Other" ){
+        var other_text = createTextField(name, "text",null, null);
+        other_text.className = "checkbox";
+        ele.appendChild(other_text);
+      }
     }
     else if( type == "hidden" ){
       ele = createHiddenEle( name, value );
     }
     // Add 'required'class to the element
     if(req== true)  ele.className = "required";
+
+    // Add a .cartodb_media class to later identify the input as a link
+    if(media) $(ele).find('input').addClass("cartodb_media");
 
     formInputs.appendChild( ele );
 	}// end of for loop
@@ -49,8 +59,12 @@ function createProjectForm( p_formType, p_formEle ) {
 	$('#'+p_formType+'ProjForm').submit(function(e){
     // Stop the form from submiting
     e.preventDefault();
+    // Set the Region
+    var user = $('#user a').text().replace("(", "").replace(")","");
+    $('input[name="unicef_region"]').val(user);
+
     // Validate the data
-    if(    validateSubmitResults() ){
+    if(validateSubmitResults() ){
       // Get the address for the project
       var address = $('#q02_country').val();
       // Find the x,y points for that address
@@ -79,9 +93,9 @@ function createProjectForm( p_formType, p_formEle ) {
           var msg_box = addParagraph(msg, "alert alert-info");
           $('#formInputs').before(msg_box);
           $(window).scrollTop(0);
-        });       
+        });      
       });
-    }
+    } 
   });
 
   // Add an event to cancel button
