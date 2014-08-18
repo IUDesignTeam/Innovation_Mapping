@@ -64,34 +64,32 @@ function initMap(){
     customCheckboxes( ["q04_scale_checkboxes","q09_creators_checkboxes","q08_users_checkboxes", "portfolios_checkboxes"], null );
     // Add an onchange event to the search box filter
     $( "#search" ).on( 'change', function(){
-      var str = searchKeyword( cartodb_tables[1], this.value, search_field );  // chamge to fields
+      var str = searchKeyword( cartodb_tables[1], [this.value], search_field );  // chamge to fields
       //displayMapLayer('region', constructSelectQuery(cartodb_tables[0],null,true,false) );
       displayMapLayer('innovation', str );        
     });
       
     // Add onclick event to the <input> elements (checkboxes)
-    $('.checkbox input').on( 'click', function(e){
+    $('.checkbox input, .radio input').on( 'click', function(e){
       var parentId = $(this).parent().parent().attr('id');
       console.log("ID: " + parentId);
       console.log($(this).val());
-
+      var query;
       if( parentId == "portfolios_checkboxes" ){
-       query = searchKeyword( cartodb_tables[1], $(this).val(), search_field );
-       /*( $(this).val() == "Youth Engagement" ){
-        var keywords = portfolios[0].keywords;
-        var string ="";
-        for(var i=0; i <keywords.length; i++){
-          string += searchKeyword( cartodb_tables[1], keywords[i], search_field );
-          string += " OR ";
+        if( $(this).val() == "Youth Engagement" ){
+          var keywords = portfolios[0].keywords;
+        }else if( $(this).val() == "Real-time Data" ){
+          var keywords = portfolios[1].keywords;
+        }else if( $(this).val() == "Infrastructure" ){
+          var keywords = portfolios[2].keywords;
         }
-        console.log("STRING: " + string);*/
-      } 
+        query = searchKeyword( cartodb_tables[1], keywords, search_field );
       }else{
         data = getFormValues("filterGroup");
         query = constructSelectQuery(cartodb_tables[1], data, false, false );
       } 
       displayMapLayer('innovation', query );
-      console.log(data);
+  
       console.log("QUERY: "  + query);
     });
 
@@ -169,7 +167,7 @@ function createFilters() {
   // Filter for Portfolios
   var portfolio_div = document.createElement("div");
   var port_values = [portfolios[0].portfolio, portfolios[1].portfolio, portfolios[2].portfolio];
-  var portEle = createInputElements( "portfolios", "checkbox", "Portfolios", port_values );
+  var portEle = createInputElements( "portfolios", "radio", "Portfolios", port_values );
   portEle.className = "filter_container";
   portfolio_div.appendChild( portEle );
   docFrag.appendChild( portfolio_div );

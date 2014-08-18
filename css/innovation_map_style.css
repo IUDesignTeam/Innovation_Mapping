@@ -46,6 +46,15 @@
 #portfolios_checkboxes {
 	border-bottom: 1px dashed grey;
 	padding-bottom: 1em;
+	padding-left: 1em;
+}
+
+#portfolios_checkboxes .radio {
+	padding-left: 2em;
+}
+
+#portfolios_checkboxes .radio label {
+	padding-left:0;	
 }
 
 #date {

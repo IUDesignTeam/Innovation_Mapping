@@ -317,15 +317,26 @@ function getOfficeProjects( p_sessionObj ){
     getFromCartoDB( tempString,  createTable );
 }
 
+/*
+  p_searchKey - array 
+  p_searchIn - array
+*/
 function searchKeyword( p_table, p_searchKey, p_searchIn ){   
   var search_sql = "SELECT * FROM " + p_table + " WHERE ";
-  
+
   for( var i=0; i<p_searchIn.length; i++ ){
-   search_sql += p_searchIn[i] +" ILIKE '%" + p_searchKey + "%'"; 
+    for( var j=0; j<p_searchKey.length; j++ ){
+      search_sql += p_searchIn[i] +" ILIKE '%" + p_searchKey[j] + "%'"; 
+      
+      if( p_searchKey.length>1 && j< p_searchKey.length-1 ){
+        search_sql += " OR ";
+      }
+    }
     if( p_searchIn.length>1 && i<p_searchIn.length-1 ){
       search_sql += " OR ";
     }
-  }    
+    
+  } 
   return search_sql;                                       
 }
 
