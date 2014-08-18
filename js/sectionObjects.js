@@ -116,10 +116,20 @@ var form_json = {"sections" : [
 		"required": true
 	},
 	{
+<<<<<<< HEAD
 		"title": "What kind of evaluation method is being utilized?",
 		"help_text": "What are the main indicators to evaluate results? (Limit response to 100 words, 50 words recommended).",
 		"input_type": "textarea",
 		"cartodb_field": "evaluation_method",
+=======
+		"title": "Target Users",
+		"help_text": "Who are the target users for the solution?",
+		"input_type": "checkbox",
+		"cartodb_field": "q08_users",
+		"input_value": [
+			"UNICEF Staff", "Innovation Labs", "General Public", "Government/Ministries", "Multilateral Organizations", "N.G.O.s", "Frontline Workers", "Donors", "Others"
+		],
+>>>>>>> d7060e7d51b60baeae50f018d5be6f8a2ef8c28e
 		"required": true
 	},
 	{
@@ -173,8 +183,7 @@ var form_json = {"sections" : [
 		"help_text": "Links to any websites / media / awards / collaterals. Please separate your responses with commas.",
 		"input_type": "text",
 		"cartodb_field": "q11_links",
-		"required": false,
-		"cartodb_media": true
+		"required": false
 	},
 	{
 		"title": "Contacts",

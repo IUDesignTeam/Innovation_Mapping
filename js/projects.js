@@ -11,7 +11,6 @@ function createProjectForm( p_formType, p_formEle ) {
 		var type = sections[i].input_type;
 		var title = i + ". " + sections[i].title;
     var req = sections[i].required;
-    var media = sections[i].cartodb_media;
 
 		// For name attribute use the same names as the cartoDB's column names
 		var name = sections[i].cartodb_field; 
@@ -25,20 +24,20 @@ function createProjectForm( p_formType, p_formEle ) {
 			var value = sections[i].input_value;			
       console.log("Value: "+ value); 
       ele = createInputElements( name, type, title, value, desc );
+<<<<<<< HEAD
       if( value[value.length-1] == "Other" ){
         var other_text = createTextField(name, "text",null, null);
         other_text.className = "checkbox";
         ele.appendChild(other_text);
       }
+=======
+>>>>>>> d7060e7d51b60baeae50f018d5be6f8a2ef8c28e
     }
     else if( type == "hidden" ){
       ele = createHiddenEle( name, value );
     }
     // Add 'required'class to the element
     if(req== true)  $(ele).addClass("required");
-
-    // Add a .cartodb_media class to later identify the input as a link
-    if(media) $(ele).find('input').addClass("cartodb_media");
 
     formInputs.appendChild( ele );
 	}// end of for loop
@@ -59,12 +58,12 @@ function createProjectForm( p_formType, p_formEle ) {
 	$('#'+p_formType+'ProjForm').submit(function(e){
     // Stop the form from submiting
     e.preventDefault();
-    // Set the Region
-    var user = $('#user a').text().replace("(", "").replace(")","");
-    $('input[name="unicef_region"]').val(user);
-
     // Validate the data
+<<<<<<< HEAD
     if( validateSubmitResults() ){
+=======
+    if(    validateSubmitResults() ){
+>>>>>>> d7060e7d51b60baeae50f018d5be6f8a2ef8c28e
       // Get the address for the project
       var address = $('#q02_country').val();
       // Find the x,y points for that address
@@ -93,9 +92,13 @@ function createProjectForm( p_formType, p_formEle ) {
           var msg_box = addParagraph(msg, "alert alert-info");
           $('#formInputs').before(msg_box);
           $(window).scrollTop(0);
+<<<<<<< HEAD
         });    
+=======
+        });
+>>>>>>> d7060e7d51b60baeae50f018d5be6f8a2ef8c28e
       });
-    } 
+    }
   });
 
   // Add an event to cancel button
@@ -104,6 +107,10 @@ function createProjectForm( p_formType, p_formEle ) {
     clearElement(this.parentNode.parentNode, true);
   });
 	addBootstrapClasses();
+}
+
+function redirect( p_obj ) {
+  console.log(p_obj);
 }
 
 /*
