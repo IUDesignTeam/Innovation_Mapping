@@ -209,30 +209,29 @@ function promptUser() {
 function cartodbGeoLocation( p_location ){
   var latitude = p_location.lat;
   var longitude = p_location.lng;
-  console.log("B - latitude = " + latitude);
-  console.log("B - longitute = " +  longitude);
+  //console.log("B - latitude = " + latitude);
+  //console.log("B - longitute = " +  longitude);
  
   // CartoDB's the_geom 
   var cartodb_geo;
   
   // Slightly move the point over,
   // so that the points wont stack up on top of each other
-  var latRandom = Math.random(); 
+  /*var latRandom = Math.random(); 
   var latNegPos = Math.random() < 0.5 ? -1 : 1;  
   latRandom *= latNegPos;
-  //console.log("latRandom = " + latRandom);
+  console.log("latRandom = " + latRandom);*/
   
-  var lonRandom = Math.random();
+  /*var lonRandom = Math.random();
   var lonNegPos = Math.random() < 0.5 ? -1 : 1;
   lonRandom *= lonNegPos;
-  //console.log("lonNegPos = " + lonNegPos);
+  console.log("lonNegPos = " + lonNegPos);*/
 
-  latitude += latRandom;
+  /*latitude += latRandom;
   longitude += lonRandom;
-  //console.log("A - latitude = " + latitude);
- // console.log("A - longitute = " +  longitude + "\n");
+  console.log("A - latitude = " + latitude);
+  console.log("A - longitute = " +  longitude + "\n");*/
 
-  
   if (latitude && longitude) {
     // the_geom uses projected point, so we need to convert 
     // the regular point position to projected point

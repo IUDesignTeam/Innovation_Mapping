@@ -13,7 +13,6 @@ function initMap(){
       loaderControl: false,
       cartodb_logo: false,
       layer_selector: false,
-      legends: false
   };
 
   
@@ -25,9 +24,20 @@ function initMap(){
     var zoom_width = $('.cartodb-zoom').width();
     $('.cartodb-zoom').css({
       position:"absolute",
-      top: 0,
+      top: 100,
       left:  $(map_div).width() - (zoom_width*3)
     });
+
+    // Last Updated Box
+    var updated = moment(vis.updated_at).format("MM/DD/YYYY");
+   
+    var time_box = document.createElement("div");
+    time_box.id = "date";
+    var textEle = document.createElement("p");
+    textEle.appendChild(document.createTextNode("Last Udated: " + updated));
+    time_box.appendChild(textEle);
+    map_div.appendChild(time_box);
+
   
     // There are two layers, base layer(gmap) and cartodb layers
     // layers[1] is the cartodb layer created in the UI
@@ -55,25 +65,37 @@ function initMap(){
     // Add an onchange event to the search box filter
     $( "#search" ).on( 'change', function(){
       var str = searchKeyword( cartodb_tables[1], this.value, search_field );  // chamge to fields
-      displayMapLayer('region', constructSelectQuery(cartodb_tables[0],null,true,false) );
+      //displayMapLayer('region', constructSelectQuery(cartodb_tables[0],null,true,false) );
       displayMapLayer('innovation', str );        
     });
       
     // Add onclick event to the <input> elements (checkboxes)
-    $('.checkbox_container input').on( 'click', function(e){
-      var parentId = $(this).parent().parent().parent().attr('id');
+    $('.checkbox input').on( 'click', function(e){
+      var parentId = $(this).parent().parent().attr('id');
       console.log("ID: " + parentId);
-      if( parentId == "portolios_filter" ){
-        //data = getFormValues('all_checks_filter');
-      }else if ( parentId == "all_checks_filter" ){
-        data = getFormValues( parentId );
-        console.log("yes");
+      console.log($(this).val());
+
+      if( parentId == "portfolios_checkboxes" ){
+       query = searchKeyword( cartodb_tables[1], $(this).val(), search_field );
+       /*( $(this).val() == "Youth Engagement" ){
+        var keywords = portfolios[0].keywords;
+        var string ="";
+        for(var i=0; i <keywords.length; i++){
+          string += searchKeyword( cartodb_tables[1], keywords[i], search_field );
+          string += " OR ";
+        }
+        console.log("STRING: " + string);*/
       } 
-      query = constructSelectQuery(cartodb_tables[1], data, false, false );
+      }else{
+        data = getFormValues("filterGroup");
+        query = constructSelectQuery(cartodb_tables[1], data, false, false );
+      } 
       displayMapLayer('innovation', query );
+      console.log(data);
       console.log("QUERY: "  + query);
     });
 
+    /*
     // Add onclick to select drop down
     $('#region select').on('change', function(){
       data = getFormValues(this.parentNode.id);
@@ -87,7 +109,7 @@ function initMap(){
       query = constructSelectQuery(cartodb_tables[1], data, false, true);
       displayMapLayer('innovation', query);
     });
-
+*/
     // Add onclick event to the reset button
     $('#resetFilters').on("click", function(){
       resetFilters();
@@ -143,14 +165,15 @@ function createFilters() {
   createSelectEle( "country", "q02_country", country_values, "filter_container", location_div );
   docFrag.appendChild(location_div);
 */
-/*  // Filter for Portfolios
+
+  // Filter for Portfolios
   var portfolio_div = document.createElement("div");
   var port_values = [portfolios[0].portfolio, portfolios[1].portfolio, portfolios[2].portfolio];
   var portEle = createInputElements( "portfolios", "checkbox", "Portfolios", port_values );
   portEle.className = "filter_container";
   portfolio_div.appendChild( portEle );
   docFrag.appendChild( portfolio_div );
-*/
+
   // Filter for
   var checkboxes_filters = [
       sections[2],    // Primary Sector
@@ -158,9 +181,6 @@ function createFilters() {
       sections[9],    // Created By 
       sections[8]     // Created For 
   ];   
-
-  //var group =  createGroupFilters(checkboxes_filters, null);
-  //others_filters.appendChild( group );
   docFrag.appendChild( createGroupFilters(checkboxes_filters, null) );
   return docFrag;
 }
@@ -175,6 +195,7 @@ function createGroupFilters( p_arrayOfFilters, p_separationEle ) {
   // Create the content (filters)
   var group = document.createElement("div");
   group.className = "filter_group";
+  group.id = "filterGroup";
 
   for( var i = 0; i < p_arrayOfFilters.length; i++ ){
     // Curent section filter
