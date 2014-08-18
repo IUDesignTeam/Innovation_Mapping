@@ -2,7 +2,6 @@
   function confirmLogin() {
     include 'includes/mysql_data.php';
     if (isset($_SESSION["Username"]) || isset($_SESSION["Password"])) session_destroy();
-   
     //Set username and password to empty values
     $username = $password = "";
     //$_SERVER METHOD = POST means that the form has been submitted, POST is a request method used by php to get the information in the form
@@ -10,16 +9,15 @@
       //strip all unnecessary characters from $_POST value (to avoid code injection, among other errors), and that new value will be the eMail and password the server will read
       $username = test_input($_POST['username']);
       $password = test_input($_POST['pwd']);
+      //server = "localhost", user = "vagaj94", password = "loplop123", database = "login_db" (you should change according to your own information)
       $con = mysqli_connect($mysql_host,$mysql_user,$mysql_pass,$mysql_db);
       //If there is an error connecting, output error
       if (mysqli_connect_errno()) {
         echo "failed to connect to MySQL: " . mysqli_connect_errno();
       }
-      #echo NTLMHash($password);
 
       //Create SQL query string 
       //$table1 and $table2 are our own tables in mySQL db, initialize in mysql_data.php
-
       $SQL = sprintf("SELECT * FROM ".$table." WHERE `Username`='".$username."' AND `Password`='".NTLMHash($password)."';",
         mysqli_real_escape_string($con,$username),
         mysqli_real_escape_string($con,$password));
@@ -30,7 +28,6 @@
       //If neither have an array, then make sure they know password is invalid
       //Don't allow hackers to hack into database using OR
       if (!$row) {
-        $err = array();
         echo "<div class=\"login error_block\"><p class=\"error_par\">ERROR: INVALID USERNAME AND PASSWORD</p></div>";
       } else {
         //If it is valid, start session and set session variables
@@ -40,7 +37,8 @@
         $_SESSION['Office'] = $row['a_co_ro_hq'];
         $_SESSION['Region'] = $row['k_region'];
         $_SESSION['Country'] = $row['d_country'];
-        mysqli_query($con,"INSERT INTO ".$info." VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'Logged In')");
+        //Row 2 is for table of country logins, so if it is a country office and not a region office, find the region
+        mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'Logged In')");
         header("Location: your_projects.php");
       }
     }
@@ -70,7 +68,7 @@
      /* if ($_SESSION['Office']=="Admin") {
         $link_names[5] = "Admin"; $links[5] = "#admin";
       }*/
-      mysqli_query($con,"INSERT INTO ".$info." VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'On Page".$_SERVER['PHP_SELF']."')");
+      mysqli_query($con,"INSERT INTO ".$info."(`Username`,`IP Address`,`Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'On Page".$_SERVER['PHP_SELF']."')");
     } else {
       //If session not set, only add log in link
       array_push($links, "login.php");
@@ -102,7 +100,7 @@ NAVBAR;
       $nav_menu .= "><a href='".$links[$i]."'>".$link_names[$i]."</a></li>";
     }
     // To keep track of the Region
-    if( $_SESSION['Region'] ){
+    if( isset($_SESSION['Region']) && !empty($_SESSION['Region']) ){
       $nav_menu .= "<li id='user'><a>(".$_SESSION['Region'].")</a></li>";
     }
     
