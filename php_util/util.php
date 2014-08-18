@@ -101,6 +101,11 @@ NAVBAR;
       }
       $nav_menu .= "><a href='".$links[$i]."'>".$link_names[$i]."</a></li>";
     }
+    // To keep track of the Region
+    if( $_SESSION['Region'] ){
+      $nav_menu .= "<li id='user'><a>(".$_SESSION['Region'].")</a></li>";
+    }
+    
     $nav_menu .= "</ul></div></div></nav>";
     echo $nav_menu;
   }

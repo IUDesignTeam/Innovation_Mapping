@@ -86,8 +86,3 @@ function getObjLength( p_object ){
   }
   return count;
 }
-
-function convertTime( p_timestamp ){
-  //var time =
-  return time;
-}

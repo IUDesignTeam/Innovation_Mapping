@@ -27,7 +27,7 @@
       <div class="center-block col-md-9">
         <div id="table-wrap">
           <div id="tableInfo">
-            <h3 class="inline-block">Your Projects Dashboard</h3>
+            <h3 class="inline-block"><span id="userOffice"></span>'s Projects Dashboard</h3>
             <p class="help-block">There are <span id="projNum">0</span> projects</p>
             <button type="button" class="btn btn-default inline-block" value=""><a href="add_project.php">Add a new project</a></button>
           </div>

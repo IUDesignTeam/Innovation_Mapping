@@ -96,8 +96,12 @@ function createProjectForm( p_formType, p_formEle ) {
 	createTable()
 */
 function createTable( p_rows ) {
+  // Set the user
+  var user = $('#user a').text().replace("(", "").replace(")","");
+  $('#userOffice').append(user);
+
   var numProj = p_rows.length;
-  
+
   // Get the number of rows
   $('#projNum').text(numProj);
 
@@ -182,6 +186,8 @@ function fillInForm( p_project ) {
     } 
     else {
       this.value = prj[this.name];
+      if(this.name == "unicef_region")
+        this.value = $('#user a').text().replace("(", "").replace(")","");
     }
   });
 }
@@ -304,17 +310,17 @@ function getOfficeProjects( p_sessionObj ){
   console.log(p_sessionObj);
   var tempString;
   //Find out what countries they can see. HQ can see all, others only some
-    if (p_sessionObj["Office"] != "HQ" && p_sessionObj["Office"] != "Admin"){
-      if (p_sessionObj["Office"] == "RO") {
-        tempString = constructSelectQuery(cartodb_tables[1], {"unicef_region": [p_sessionObj["Region"]]}, false, false );
-      } else {
-        //tempString = selectKeywordQuery(cartodb_tables[1], p_sessionObj["Country"], ["q02_country"]);
-        tempString = constructSelectQuery(cartodb_tables[1], {"q02_country":[p_sessionObj["Country"]]}, false, true );
-      }
-    }else{
-      tempString = constructSelectQuery( cartodb_tables[1], null, true, false );
+  if (p_sessionObj["Office"] != "HQ" && p_sessionObj["Office"] != "Admin"){
+    if (p_sessionObj["Office"] == "RO") {
+      tempString = constructSelectQuery(cartodb_tables[1], {"unicef_region": [p_sessionObj["Region"]]}, false, false );
+    } else {
+      //tempString = selectKeywordQuery(cartodb_tables[1], p_sessionObj["Country"], ["q02_country"]);
+      tempString = constructSelectQuery(cartodb_tables[1], {"q02_country":[p_sessionObj["Country"]]}, false, true );
     }
-    getFromCartoDB( tempString,  createTable );
+  }else{
+    tempString = constructSelectQuery( cartodb_tables[1], null, true, false );
+  }
+  getFromCartoDB( tempString,  createTable );
 }
 
 /*

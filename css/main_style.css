@@ -55,3 +55,9 @@ ul.nav {
   padding-bottom: 3em;
   height: 100%;
 }
+
+#user a {
+  pointer-events: none;
+  cursor: default;
+  color: grey;
+}

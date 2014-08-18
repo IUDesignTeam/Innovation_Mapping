@@ -9,7 +9,7 @@ function initMap(){
   var visOptions = {
       center: [0, 0],
       zoom: 3,
-      zoomControl: false,
+      zoomControl: true,
       loaderControl: false,
       cartodb_logo: false,
       layer_selector: false,
@@ -34,7 +34,7 @@ function initMap(){
     var time_box = document.createElement("div");
     time_box.id = "date";
     var textEle = document.createElement("p");
-    textEle.appendChild(document.createTextNode("Last Udated: " + updated));
+    textEle.appendChild(document.createTextNode("Last Updated: " + updated));
     time_box.appendChild(textEle);
     map_div.appendChild(time_box);
 
