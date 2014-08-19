@@ -61,3 +61,7 @@ ul.nav {
   cursor: default;
   color: grey;
 }
+
+p.overview {
+  text-indent: 2em;
+}
