@@ -24,7 +24,7 @@ var form_json = {"sections" : [
 		"cartodb_field": "q02_country",
 		"required": true
 	},
-	{
+/*	{
 		"title": "Focus Areas",
 		"help_text": "Please select all that applies.",
 		"input_type": "checkbox",
@@ -36,7 +36,31 @@ var form_json = {"sections" : [
 		"colors": [
 			'#ff6600', '#850200', '#ff00ff', '#0099ff', '#136400', '#081b47', '#33ff00', '#9999cc', '#7b00b4', '#cc0066', '#990066'
 		]
+	},*/
+	{
+		"title": "Primary Sector",
+		"help_text": "Please select the primary sector",
+		"input_type": "radio",
+		"cartodb_field": "q03a_sector",
+		"input_value": [
+			"Health", "HIV", "Nutrition", "WASH", "Education", "Child Protection", "Monitoring and Evaluation", "Supply", "Social Inclusion", "Emergency", "C4D", "Social Policy"
+		],
+		"required": true,
+		"colors": [
+			'#ff6600', '#850200', '#ff00ff', '#0099ff', '#136400', '#081b47', '#33ff00', '#9999cc', '#7b00b4', '#cc0066', '#990066'
+		]  
 	},
+	{
+		"title": "Other Sectors",
+		"help_text": "Please select any additional sector(s) if applicable",
+		"input_type": "checkbox",
+		"cartodb_field": "q03b_sector",
+		"input_value": [
+			"Health", "HIV", "Nutrition", "Education", "Child Protection", "Social Inclusion", "Emergency", "C4D", "Social Policy", "Supply", "Monitoring and Evaluation", "Other"
+		],
+		"required": false
+	},
+
 	{
 		"title": "Portfolio",
 		"help_text": "Please select all that apply.", 

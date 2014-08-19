@@ -78,3 +78,13 @@
 	padding: 0;
 	margin: 0;
 }
+
+.sub_filter_hide {
+	visibility: hidden;
+	display: none;
+}
+
+#prt_1 {
+	padding-bottom: 0;
+	margin: 0;
+}
