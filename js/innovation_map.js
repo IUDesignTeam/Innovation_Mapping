@@ -47,6 +47,7 @@ function initMap(){
 
     // First create the side filters
     var side_filters = createFilters();
+
     // Second populate the side menu with those filters
     createToggleMenu("side_filters", null, side_filters, map_div);
 
@@ -54,14 +55,20 @@ function initMap(){
     //$('#side_filters').children('div').addClass('filter_group');
 
     // Add class for select filters
-    $('#region, #country').addClass('select-options');
+    //$('#region, #country').addClass('select-options');
 
     // Add classes to the elements
     addBootstrapClasses();
 
     // Add color checkboxes
-    customCheckboxes( ["q03a_sector_checkboxes"], sections[2].colors );
-    customCheckboxes( ["q04_scale_checkboxes","q09_creators_checkboxes","q08_users_checkboxes", "portfolios_checkboxes"], null );
+    customCheckboxes( ["q03b_sector_checkboxes"], sections[2].colors );
+    customCheckboxes( ["portfolio_checkboxes", "software_tech_checkboxes","q04_scale_checkboxes","q09_creators_checkboxes","q08_users_checkboxes"], null );
+    
+    // This is used for the sub technology filter
+    // We need to append the sub filter to the specific main filter
+    $('#prt_1').after( $('#software_tech_checkboxes') );
+    $('#software_tech_checkboxes').hide();
+
     // Add an onchange event to the search box filter
     $( "#search" ).on( 'change', function(){
       var str = searchKeyword( cartodb_tables[1], [this.value], search_field );  // chamge to fields
@@ -71,25 +78,35 @@ function initMap(){
       
     // Add onclick event to the <input> elements (checkboxes)
     $('.checkbox input, .radio input').on( 'click', function(e){
-      var parentId = $(this).parent().parent().attr('id');
-      console.log("ID: " + parentId);
-      console.log($(this).val());
-      var query;
-      if( parentId == "portfolios_checkboxes" ){
-        if( $(this).val() == "Youth Engagement" ){
-          var keywords = portfolios[0].keywords;
-        }else if( $(this).val() == "Real-time Data" ){
-          var keywords = portfolios[1].keywords;
+      var parentId = $(this).parent().parent().parent().attr('id');
+      //console.log("ID: " + parentId);
+      var keywords, query;
+      
+      if( parentId == "portfolio_checkboxes" ){
+        if( $(this).val() == "Real-time Data" ){
+          keywords = portfolios[1].keywords;
+          $('#software_tech_checkboxes').show();
+        }
+        else if( $(this).val() == "Youth Engagement" ){
+          keywords = portfolios[0].keywords;
         }else if( $(this).val() == "Infrastructure" ){
-          var keywords = portfolios[2].keywords;
+            keywords = portfolios[2].keywords;
         }
         query = searchKeyword( cartodb_tables[1], keywords, search_field );
-      }else{
-        data = getFormValues("filterGroup");
-        query = constructSelectQuery(cartodb_tables[1], data, false, false );
+      }
+      else{
+        if( parentId == "filterGroup" ){
+          data = getFormValues("filterGroup");
+        }else if($(this).parent().parent().attr('id') == "software_tech_checkboxes"){
+          data = getFormValues("software_tech_checkboxes");
+        }
+        if(getObjLength(data) != 0){
+          query = constructSelectQuery(cartodb_tables[1], data, false, false );
+        }else{
+          query = constructSelectQuery(cartodb_tables[1],null,true,null);
+        }
       } 
       displayMapLayer('innovation', query );
-  
       console.log("QUERY: "  + query);
     });
 
@@ -133,11 +150,11 @@ function resetFilters(){
   // Clear the search field
   $('#search').val("");
   // Reset the region and the country values
-  $('#region select').val("All Regions");
-  displayMapLayer('region', constructSelectQuery(cartodb_tables[0],null,true,null) );
-  $('#country select').val("All Countries");
-  displayMapLayer('innovation', constructSelectQuery(cartodb_tables[1],null,true,null) );
+  //$('#region select').val("All Regions");
+  //displayMapLayer('region', constructSelectQuery(cartodb_tables[0],null,true,null) );
+  //$('#country select').val("All Countries");
   // Clear the checkboxes values
+  displayMapLayer('innovation', constructSelectQuery(cartodb_tables[1],null,true,null) );
   $('input:checked').prop('checked',false);
 }
 
@@ -165,13 +182,26 @@ function createFilters() {
 */
 
   // Filter for Portfolios
+  var prt = sections[3];
   var portfolio_div = document.createElement("div");
   portfolio_div.id = "portfolio_checkboxes";
-  var port_values = [ portfolios[0].portfolio, portfolios[1].portfolio, portfolios[2].portfolio ];
-  var portEle = createInputElements( "portfolio", "radio", "Portfolio", port_values, null );
+  //var port_values = [ portfolios[0].portfolio, portfolios[1].portfolio, portfolios[2].portfolio ];
+  var port_values = prt.input_value;
+  var portEle = createInputElements( "portfolio", prt.input_type, prt.title, port_values, null );
   portEle.className = "filter_container";
   portfolio_div.appendChild( portEle );
   docFrag.appendChild( portfolio_div );
+  $(portfolio_div).find('.checkbox').each(function(index){
+    $(this).attr('id', 'prt_'+index);
+  });
+
+  // Filter for Technology
+  var tech = sections[9];
+  var sub_div = createInputElements( tech.cartodb_field, tech.input_type, null, tech.input_value, null );
+  sub_div.id = tech.cartodb_field + "_checkboxes";
+  sub_div.className = "sub_checkboxes";
+  // Append the sub category to the portfolio
+  docFrag.appendChild(sub_div);
 
   // Filter for
   var checkboxes_filters = [
@@ -207,6 +237,7 @@ function createGroupFilters( p_arrayOfFilters, p_separationEle ) {
       filter_values = filter.input_value;
     } 
     var inputs = createInputElements( filter.cartodb_field, "checkbox", filter.title, filter_values );
+    inputs.id = filter.cartodb_field + "_checkboxes";
     inputs.className = "filter_container";
     group.appendChild( inputs );
 

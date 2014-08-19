@@ -84,24 +84,17 @@ createTextField() - creates form's text filed input. (Bootstrap's format)
 	descriptionEle	- an element object (Helper text for the sections)
 */
 function createTextField( inputName, type, fieldName, descriptionEle ){
+	var div_wrap, ele;
 	// Create a div element to hold the elements
-<<<<<<< HEAD
 	div_wrap = document.createElement( "div" );
 	
 	if(fieldName){
-		title = document.createElement( "label" );
+		var title = document.createElement( "label" );
 		title.className ="section-title";
 		title.appendChild( document.createTextNode( fieldName.toUpperCase() ) );
 		div_wrap.appendChild( title );
 	}
-=======
-	var div_wrap = document.createElement( "div" );
-	var title = document.createElement( "label" );
-	title.className ="section-title";
-	title.appendChild( document.createTextNode( fieldName.toUpperCase() ) );
->>>>>>> d7060e7d51b60baeae50f018d5be6f8a2ef8c28e
 
-	var ele;
 	if( type == "text" ){
 		ele = document.createElement( "input" );
 		ele.id = inputName;
@@ -110,8 +103,8 @@ function createTextField( inputName, type, fieldName, descriptionEle ){
 		ele = document.createElement( "textarea" );
 	}
 	ele.name = inputName;
+
 	// Append all the elements to the div wrapper
-	div_wrap.appendChild( title );
 	if( descriptionEle ) div_wrap.appendChild( descriptionEle );
 	div_wrap.appendChild ( ele );
 	return div_wrap;
@@ -127,15 +120,16 @@ createInputElements
 */
 function createInputElements( p_name, p_type, p_fieldName, p_values, p_desc ){
 	// Create a div element to group the checkboxes or radio buttons
-	console.log("TYPE: "  + p_type);
 	var group_div = document.createElement("div"); 
 	group_div.setAttribute("class", p_type + "_container");
 	//group_div.id = p_name + "_checkboxes";
+	if(p_fieldName){
+		var header = document.createElement( "label" );
+		header.className ="section-title";
+		header.appendChild( document.createTextNode(p_fieldName.toUpperCase()) );
+		group_div.appendChild( header );
+	}
 
-	var header = document.createElement( "label" );
-	header.className ="section-title";
-	header.appendChild( document.createTextNode(p_fieldName.toUpperCase()) );
-	group_div.appendChild( header );
 	// Helper text
 	if( p_desc ) group_div.appendChild( p_desc );
 	

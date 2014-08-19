@@ -45,6 +45,11 @@ var form_json = {"sections" : [
 		"input_value": [
 			"Youth Engagement", "Real-time Data", "Infrastructure"
 		],
+		"keywords": [
+			["young","youth","child","adolescent"],
+			["data","realtime","real time","real-time","data collection","mobile","cellphone","mobile phone","tablet","camera","smartphone","phone","rapid","sms","magpi","dhis","odk","open data kit"],
+			["infrastructure","solar","water","sanitation","toilet","latrine","pit","pipe","electricity","electrical","electric","generator","power","grid"]
+		],
 		"required": true
 	},
 	{
@@ -63,7 +68,7 @@ var form_json = {"sections" : [
 		"input_type": "checkbox",
 		"cartodb_field": "q08_users",
 		"input_value": [
-			"End Beneficiaries", "Government Authorities", "Development Authorities", "Frontline Workers", "Donors",  "UNICEF Offices", "Other"
+			"UNICEF Staff", "Innovation Labs", "General Public", "Government/Ministries", "Multilateral Organizations", "N.G.O.s", "Frontline Workers", "Donors", "End Beneficiaries", "Government Authorities", "Development Authorities", "Frontline Workers", "UNICEF Offices", "Other"
 		],
 		"required": true 
 	},
@@ -166,7 +171,7 @@ var form_json = {"sections" : [
 		"title": "When is the project expected to conclude or be handed over?",
 		"help_text": "(mm/dd/yyyy)",
 		"input_type": "text",
-		"cartodb_field": "end_day",
+		"cartodb_field": "end_date",
 		"required": false
 	},
 	{

@@ -3,3 +3,4 @@ mysql_data.php
 database_passwords.php
 test_scripts.php
 proxy.php
+cartodb_calls.js

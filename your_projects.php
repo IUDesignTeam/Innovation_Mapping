@@ -10,6 +10,7 @@
   <script src="js/sectionObjects.js"></script>
   <script src="js/helpers.js"></script>
   <script src="js/forms.js"></script>
+  <script src="js/cartodb_calls.js"></script>
   <script src="js/projects.js"></script>
 
   <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/sortable/0.6.0/css/sortable-theme-bootstrap.css">

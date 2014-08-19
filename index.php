@@ -26,6 +26,7 @@
   <script src="js/helpers.js"></script>
   <script src="js/forms.js"></script>
   <script src="js/toggle_menu.js"></script>
+  <script src="js/cartodb_calls.js"></script>
   <script src="js/projects.js"></script>
   <script src="js/innovation_map.js"></script>
 </body>
