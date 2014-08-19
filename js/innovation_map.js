@@ -99,7 +99,7 @@ function initMap(){
         // If the length is not zero then there is a checked input,
         // Therefore create a query, if its zero just show all points
         if(getObjLength(data) != 0){
-          query = constructSelectQuery(cartodb_tables[1], data, false, false );
+          query = constructSelectQuery(cartodb_tables[1], data, false, true );
         }else{
           query = constructSelectQuery(cartodb_tables[1],null,true,null);
         }
