@@ -28,7 +28,8 @@
       //If neither have an array, then make sure they know password is invalid
       //Don't allow hackers to hack into database using OR
       if (!$row) {
-        echo "<div class=\"login error_block\"><p class=\"error_par\">ERROR: INVALID USERNAME AND PASSWORD</p></div>";
+        mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$username."', '".$_SERVER['REMOTE_ADDR']."', 'Attempted Log In')");
+        echo "<div class=\"alert alert-danger\"><p class=\"error_par\">ERROR: INVALID USERNAME AND PASSWORD</p></div>";
       } else {
         //If it is valid, start session and set session variables
         session_start();
@@ -143,6 +144,23 @@ NAVBAR;
     }
   }
 
+  function addProject() {
+    include 'includes/mysql_data.php';
+    if (!empty($_SERVER["QUERY_STRING"])) {
+      $query = $_SERVER["QUERY_STRING"];
+      $con = mysqli_connect($mysql_host, $mysql_user, $mysql_pass, $mysql_db);
+      if (mysqli_connect_errno()) {
+        echo "Error connecting to mysql: " . mysqli_connect_errno();
+      }
+
+      $result = mysqli_query($con, "INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."', '".$_SERVER['REMOTE_ADDR']."', '".$query." Project')");
+      $row = mysqli_fetch_array($result);
+      if ($row) {
+        echo "<script type=\"text/javascript\">window.location.href = 'your_projects.php'</script>;";
+      }
+    }
+  }
+/*
     function addProject() {
     include 'includes/mysql_data.php';
     //QUERY_STRING is the query after the '?' in the url
@@ -227,6 +245,7 @@ NAVBAR;
       echo "<script>window.location.href = 'your_projects.php';</script>'";
     }
   }
+  */
 
   function createHeader() {
     $header = <<<HEADER

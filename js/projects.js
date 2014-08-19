@@ -92,6 +92,13 @@ function createProjectForm( p_formType, p_formEle ) {
           var msg_box = addParagraph(msg, "alert alert-info");
           $('#formInputs').before(msg_box);
           $(window).scrollTop(0);
+          var queryArray = query.split(" ");
+          var firstWord = queryArray[0];
+          if (firstWord.toUpperCase() == "UPDATE") {
+            window.location.href = 'your_projects.php?Updated';
+          } else if (firstWord.toUpperCase() == "INSERT") {
+            window.location.href = 'your_projects.php?Added';
+          }
         });    
       });
     }

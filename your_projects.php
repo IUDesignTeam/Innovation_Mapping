@@ -21,6 +21,7 @@
   <?php 
     createNavigation("Your Projects");
     confirmSession();
+    addProject();
     //addUpdatedProject();
   ?>
   <div id="main_div" class="container-fluid"> 
