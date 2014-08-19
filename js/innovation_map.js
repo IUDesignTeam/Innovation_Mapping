@@ -197,7 +197,8 @@ function createFilters() {
 
   // Filter for Technology
   var tech = sections[9];
-  var sub_div = createInputElements( tech.cartodb_field, tech.input_type, null, tech.input_value, null );
+  var tech_vals = tech.input_value.slice(0, tech.input_value.length - 1);
+  var sub_div = createInputElements( tech.cartodb_field, tech.input_type, null, tech_vals, null );
   sub_div.id = tech.cartodb_field + "_checkboxes";
   sub_div.className = "sub_checkboxes";
   // Append the sub category to the portfolio

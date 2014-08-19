@@ -54,8 +54,8 @@
   function createNavigation($active) {
     session_start();
     //Initialize array of links and link names, innovation_map and about will be on all pages, so initialize array with those links
-    $links = array("index.php", "about.php", "add_project.php");
-    $link_names = array("Home", "About", "Add Project");
+    $links = array("http://unicefstories.org/","index.php", "about.php", "add_project.php");
+    $link_names = array("Blog", "Home", "About", "Add Project");
     //If session is set, add all links for logged in people
     if (isset($_SESSION['Username']) && isset($_SESSION['Password'])) {
       include 'includes/mysql_data.php';
@@ -98,7 +98,9 @@ NAVBAR;
       if ($link_names[$i] == $active) { 
         $nav_menu .= "class = 'active'";
       }
-      $nav_menu .= "><a href='".$links[$i]."'>".$link_names[$i]."</a></li>";
+      $nav_menu .= "><a";
+      $nav_menu .= ($i == 0) ? " target='_blank'" :"";
+      $nav_menu .= " href='".$links[$i]."'>".$link_names[$i]."</a></li>";
     }
     // To keep track of the Region
     if( isset($_SESSION['Region']) && !empty($_SESSION['Region']) ){
