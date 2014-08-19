@@ -18,7 +18,13 @@ function getFormValues( p_formId ){
 		if( !answers.hasOwnProperty(ans.name) ){
 			answers[ans.name] = [ans.value];
 		}else{
-			answers[ans.name].push(ans.value);
+			// When its checckboces dont include the 'Other' 
+			// if its checked or if it's text field is empty
+			if(ans.value != "Other"){
+				if(ans.value != "")
+				answers[ans.name].push(ans.value);
+			}
+			
 		}
 	}
 	return answers;

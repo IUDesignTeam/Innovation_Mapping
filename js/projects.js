@@ -55,9 +55,14 @@ function createProjectForm( p_formType, p_formEle ) {
 	$('#'+p_formType+'ProjForm').submit(function(e){
     // Stop the form from submiting
     e.preventDefault();
+      
     // Validate the data
-
     if( validateSubmitResults() ){
+      // Set the user
+      // Need to parse the region value
+      var user = $('#user a').text().replace("(", "").replace(")","");
+      $('input[name="unicef_region"]').val(user);
+
       // Get the address for the project
       var address = $('#q02_country').val();
       // Find the x,y points for that address
@@ -69,6 +74,7 @@ function createProjectForm( p_formType, p_formEle ) {
         // Get form data
         var current_form = $('form')[0].id;
         var data = getFormValues(current_form);
+        console.log("Data: "+ data);
        
         var query;
         if( current_form == "addProjForm" ){
@@ -78,7 +84,7 @@ function createProjectForm( p_formType, p_formEle ) {
           var columnId = {"column":"cartodb_id", "value": $('#'+current_form).parent().attr('id')};
           query = constructUpdateQuery( cartodb_tables[1], data, columnId );
         }
-        //console.log("QUERY: "+query);
+        console.log("QUERY: "+query);
         // Post to CartoDB table
         postToCartoDB( query, function(){
           var msg = "Project has been added successfully";
@@ -197,8 +203,8 @@ function fillInForm( p_project ) {
     } 
     else {
       this.value = prj[this.name];
-      if(this.name == "unicef_region")
-        this.value = $('#user a').text().replace("(", "").replace(")","");
+     // if(this.name == "unicef_region")
+      //  this.value = $('#user a').text().replace("(", "").replace(")","");
     }
   });
 }
@@ -226,28 +232,9 @@ function promptUser() {
 function cartodbGeoLocation( p_location ){
   var latitude = p_location.lat;
   var longitude = p_location.lng;
-  //console.log("B - latitude = " + latitude);
-  //console.log("B - longitute = " +  longitude);
  
   // CartoDB's the_geom 
   var cartodb_geo;
-  
-  // Slightly move the point over,
-  // so that the points wont stack up on top of each other
-  /*var latRandom = Math.random(); 
-  var latNegPos = Math.random() < 0.5 ? -1 : 1;  
-  latRandom *= latNegPos;
-  console.log("latRandom = " + latRandom);*/
-  
-  /*var lonRandom = Math.random();
-  var lonNegPos = Math.random() < 0.5 ? -1 : 1;
-  lonRandom *= lonNegPos;
-  console.log("lonNegPos = " + lonNegPos);*/
-
-  /*latitude += latRandom;
-  longitude += lonRandom;
-  console.log("A - latitude = " + latitude);
-  console.log("A - longitute = " +  longitude + "\n");*/
 
   if (latitude && longitude) {
     // the_geom uses projected point, so we need to convert 
