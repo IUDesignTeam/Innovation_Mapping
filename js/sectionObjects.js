@@ -92,7 +92,7 @@ var form_json = {"sections" : [
 		"input_type": "checkbox",
 		"cartodb_field": "q08_users",
 		"input_value": [
-			"UNICEF Staff", "Innovation Labs", "General Public", "Government/Ministries", "Multilateral Organizations", "N.G.O.s", "Frontline Workers", "Donors", "End Beneficiaries", "Government Authorities", "Development Authorities", "Frontline Workers", "UNICEF Offices", "Other"
+			"End Beneficiaries", "Government Authorities", "Development Authorities", "Frontline Workers", "Donors", "UNICEF Offices", "Other"
 		],
 		"required": true 
 	},
@@ -149,16 +149,6 @@ var form_json = {"sections" : [
 		"help_text": "What are the main indicators to evaluate results? (Limit response to 100 words, 50 words recommended).",
 		"input_type": "textarea",
 		"cartodb_field": "evaluation_method",
-	},
-	{
-		"title": "Target Users",
-		"help_text": "Who are the target users for the solution?",
-		"input_type": "checkbox",
-		"cartodb_field": "q08_users",
-		"input_value": [
-			"UNICEF Staff", "Innovation Labs", "General Public", "Government/Ministries", "Multilateral Organizations", "N.G.O.s", "Frontline Workers", "Donors", "Others"
-		],
-		"required": true
 	},
 	{
 		"title": "Number of target users/beneficiaries impacted so far.",
