@@ -373,23 +373,28 @@ function constructSelectQuery( p_table, p_data, p_selectAll, p_keyword ){
       sql += key;
 
       // Add on ilike if its keyword/pattern or in if its specific value
-      sql += ( (p_keyword==true) ? " ILIKE '%":" IN (" );
+      sql += ( (p_keyword==true) ? "":" IN (" );
       for( var i=0; i<p_data[key].length; i++ ){
-        // Open quote
-        sql += ( (p_keyword==true) ? "":"'" );
+        // Open % or quote
+        sql += ( (p_keyword==true) ? " ILIKE '%" : "'" );
+
         // Value
         sql += p_data[key][i];
-        // Close quote
-        sql += ( (p_keyword==true) ? "":"'" );
-        if ( p_data[key].length > 1 && i < p_data[key].length-1 ) sql += ", ";
+
+        // Close % or quote
+        sql += ( (p_keyword==true) ? "%'":"'" );
+
+        if ( p_data[key].length > 1 && i < p_data[key].length-1 ){
+          sql += ( (p_keyword==true) ? " OR " + key:"," );
+        } 
       }
-      sql += ( (p_keyword==true) ? "%'":")" );
+      sql += ( (p_keyword==true) ? "":")" );
   
       keyCount++; 
       // Only add 'and' if the # of properties in the object is greater than 1, and 
       // the current property # is less than the # of properties in the object
       if(len > 1 && keyCount < len){
-        sql += ( (p_keyword==true) ? " OR ":" AND " );    
+        sql += " AND ";   
       }    
     }
   }
