@@ -112,10 +112,6 @@ function createProjectForm( p_formType, p_formEle ) {
 	addBootstrapClasses();
 }
 
-function redirect( p_obj ) {
-  console.log(p_obj);
-}
-
 /*
 	createTable()
 */

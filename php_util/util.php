@@ -154,8 +154,7 @@ NAVBAR;
       }
 
       $result = mysqli_query($con, "INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."', '".$_SERVER['REMOTE_ADDR']."', '".$query." Project')");
-      $row = mysqli_fetch_array($result);
-      if ($row) {
+      if ($result) {
         echo "<script type=\"text/javascript\">window.location.href = 'your_projects.php'</script>;";
       }
     }
