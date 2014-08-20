@@ -1,6 +1,11 @@
 <?php
+  /*
+    confirmLogin() - looks at mysql database to validate form data, confirm log in data, and determine whether user will be logged in or not
+  */
   function confirmLogin() {
+    //include mysql_data to use to connect to mySQL (anything not seen as declared is declared in there. Declare your own information)
     include 'includes/mysql_data.php';
+    //If they try to log in while a session is already set, destroy the session first so a new session may begin with no errors
     if (isset($_SESSION["Username"]) || isset($_SESSION["Password"])) session_destroy();
     //Set username and password to empty values
     $username = $password = "";
@@ -9,15 +14,14 @@
       //strip all unnecessary characters from $_POST value (to avoid code injection, among other errors), and that new value will be the eMail and password the server will read
       $username = test_input($_POST['username']);
       $password = test_input($_POST['pwd']);
-      //server = "localhost", user = "vagaj94", password = "loplop123", database = "login_db" (you should change according to your own information)
+      //connect to mySQL database
       $con = mysqli_connect($mysql_host,$mysql_user,$mysql_pass,$mysql_db);
       //If there is an error connecting, output error
       if (mysqli_connect_errno()) {
         echo "failed to connect to MySQL: " . mysqli_connect_errno();
       }
 
-      //Create SQL query string 
-      //$table1 and $table2 are our own tables in mySQL db, initialize in mysql_data.php
+      //Create SQL query string
       $SQL = sprintf("SELECT * FROM ".$table." WHERE `Username`='".$username."' AND `Password`='".NTLMHash($password)."';",
         mysqli_real_escape_string($con,$username),
         mysqli_real_escape_string($con,$password));
@@ -26,11 +30,11 @@
       //Fetch array from result, which is queried onto $con connection using $SQL, the SQL query string
       $row = mysqli_fetch_assoc($result);
       //If neither have an array, then make sure they know password is invalid
-      //Don't allow hackers to hack into database using OR
       if (!$row) {
+        //If the log in fails, log it as an attempted log in
         $action = "Attempted Log In";
         logAction($con,$info,$username,$action);
-        //mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$username."', '".$_SERVER['REMOTE_ADDR']."', 'Attempted Log In')");
+        //And then add an error message to the page (alert alert-danger are bootstrap classes for styling)
         echo "<div class=\"alert alert-danger\"><p class=\"error_par\">ERROR: INVALID USERNAME AND PASSWORD</p></div>";
       } else {
         //If it is valid, start session and set session variables
@@ -40,6 +44,7 @@
         $_SESSION['Office'] = $row['a_co_ro_hq'];
         $_SESSION['Region'] = $row['k_region'];
         $_SESSION['Country'] = $row['d_country'];
+        //Set the area based on the Office type to show on project dashboard
         if ($_SESSION['Office'] == 'CO') {
           $_SESSION['Area'] = $_SESSION['Country'];
         } else if ($_SESSION['Office'] == 'Admin') {
@@ -47,16 +52,20 @@
         } else {
           $_SESSION['Area'] = $_SESSION['Region'];
         }
-        //Row 2 is for table of country logins, so if it is a country office and not a region office, find the region
+        //Log the log in
         $action = "Logged In";
         $user = $_SESSION['Username'];
         logAction($con,$info,$user,$action);
-        //mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'Logged In')");
+        //Redirect to Your Projects Dashboard
         header("Location: your_projects.php");
       }
     }
   }
-  //Trims any potential malicious and/or unuseful characters from the data input
+
+  /*
+    test_input() - Trims any potentially malicious and/or unuseful characters from the data input
+    $data - the string being trimmed
+  */
   function test_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
@@ -64,17 +73,26 @@
     return $data;
   }
 
+  /*
+    createNavigation() - create navigation bar and logs navigation to page
+  */
   function createNavigation($active) {
+    //Include mysql_data for mysql connection data, and connect to mySQL
     include 'includes/mysql_data.php';
     $con = mysqli_connect($mysql_host,$mysql_user,$mysql_pass,$mysql_db);
+    //Start Session and initialize array of links that will appear on all pages
     session_start();
-    //Initialize array of links and link names, innovation_map and about will be on all pages, so initialize array with those links
+    //Here, including Links to unicefstories Blog Page, index (with map), and about page. Add Project redirects to Log In Page if not logged in
     $links = array("http://unicefstories.org/","index.php", "about.php", "add_project.php");
+    //Here, names of links (as they will appear on nav bar). 
     $link_names = array("Blog", "Home", "About", "Add Project");
+    //Save String to log page visit later
     $action = "On Page ".$_SERVER['PHP_SELF'];
+    //Initialize user as empty variable, to set later for logging
     $user = "";
-    //If session is set, add all links for logged in people
+    //If session is set, add link for your project dashboard, and log out link
     if (isset($_SESSION['Username']) && isset($_SESSION['Password'])) {
+      //Make sure the timeout time hasn't passed since they last moved between pages (see checkTimeout function for more info)
       checkTimeout($con);
       
       //Add your projects, add project, and logout script
@@ -84,14 +102,16 @@
      /* if ($_SESSION['Office']=="Admin") {
         $link_names[5] = "Admin"; $links[5] = "#admin";
       }*/
+      //Will log Username of account when logging page visits
       $user = $_SESSION['Username'];
-      //mysqli_query($con,"INSERT INTO ".$info."(`Username`,`IP Address`,`Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'On Page".$_SERVER['PHP_SELF']."')");
     } else {
-      $user = "Guest";
-      //If session not set, only add log in link
+      //If session not set, add log in link instead
       array_push($links, "login.php");
       array_push($link_names,"Log In");
+      //When logged, user will be known as "guest"
+      $user = "Guest";
     }
+    //Log the page visit
     logAction($con,$info,$user,$action);
     //Echo navbar style class items
     $nav_menu = <<<NAVBAR
@@ -109,167 +129,126 @@
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
 NAVBAR;
-    //It honestly doesn't matter wether you pick count($links) or count($link_names), both should be same size
+    //For loop to add links to navbar from array
+    //PS you could use $links or $link_names for count(x), because both should be same size
     for ($i = 0; $i < count($links); $i++) {
-      //Makes format: <li><a href='link'>Link Name</a></li>
+      //Makes format: <li (class ='active')><a (target='_blank') href='link'>Link Name</a></li>, () = only sometimes
+      //Begin making list item
       $nav_menu .= "<li ";
       if ($link_names[$i] == $active) { 
+        //Add active class for link of page user is currently on
         $nav_menu .= "class = 'active'";
       }
+      //Add actual link
       $nav_menu .= "><a";
       $nav_menu .= ($i == 0) ? " target='_blank'" :"";
+      //Add href along with name of link to show on navbar
       $nav_menu .= " href='".$links[$i]."'>".$link_names[$i]."</a></li>";
     }
-    // To keep track of the Region
-    $area = "";
+    //Check if the region is set (region session variable should exist when logged in)
     if( isset($_SESSION['Region']) && !empty($_SESSION['Region']) ){
+      //Add region as last item in list. Will be used for reading in as hidden form item when adding projects, to associate with region of office
       $nav_menu .= "<li id='user'><a>(".$_SESSION['Region'].")</a></li>";
     }
-    
+    //Finish list, divs, and nav bar
     $nav_menu .= "</ul></div></div></nav>";
     echo $nav_menu;
   }
-  
+
+  /*
+    findProjects() - creates a json encodable object from $_SESSION to determine projects to be shown on dashboard based on certain $_SESSION variables
+  */
   function findProjects() {
-#    $rowNames = ['Timestamp','username','region','Project_Name','Country','Primary_Sector','Other_Sectors','Scale','Issue','Solution','Results','Target_Users','Creators','Status','Links','Contacts'];
-    //mysql_data.php assigns host, user, pass, db data
-    //Find projects using javascript and session/user information
+    //Create $session associative array to take some attributes from $_SESSION
     $session = array();
     $session['Username'] = $_SESSION['Username'];
     $session['Office'] = $_SESSION['Office'];
     $session['Region'] = $_SESSION['Region'];
     $session['Country'] = $_SESSION['Country'];
     $session['Area'] = $_SESSION['Area'];
-
+    //json_encode $session array and send to javascript function
+    //$session was amde becasue json_encode didn't work with the pure $_SESSION variable. Also wouldn't be safe since the password is stored in $_SESSION
     $script = "<script>getOfficeProjects(".json_encode($session).");</script>";
     echo $script;
   }
 
+  /*
+    confirmSession() - confirms session, makes sure that there is a user logged in (used for pages that require user to be logged in)
+  */
   function confirmSession() {
+    //Make sure session exists, and if doesn't, destroy the session and send to log in page
     if (!(isset($_SESSION['Username']) && isset($_SESSION['Password']))) {
       session_destroy();
       header("Location: login.php");
     }
   }
 
+  /*
+    checkTimeout() - whenever action is done, determine whether the session has timed out or not, and if not, reset timeout variable
+    $con - mysql connection
+  */
   function checkTimeout($con) {
     include 'includes/mysql_data.php';
+    //If the timeout $_SESSION variable was already set, check if specified time has passed
+    //time() is in seconds (i.e. a time() of 1800 = 30 minutes)
     if (isset($_SESSION['timeout']) && $_SESSION['timeout'] + 30 * 60 < time()) {
-      //mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."', '".$_SERVER['REMOTE_ADDR']."', 'Timed Out')");
+      $action = 'Timed Out';
+      $user = $_SESSION['Username'];
+      logAction($con,$info,$user,$action);
+      //If the current time is greater than time since last timeout reset + mathematically displayed time, destroy session and send user to log in page
       session_destroy();
       header("Location: login.php");
     } else {
+      //If the user still hasn't reached the timeout limit reset the time
       $_SESSION['timeout'] = time();
     }
+    //NOTE: TIMEOUT IS ONLY RESET WHEN USER MOVES PAGES (i.e. playing with the map doesn't reset the timeout)
   }
 
+  /*
+    addProject() - logs whenever a project is Added or Updated
+  */
   function addProject() {
+    //Include mysql_data file for data to connect to mySQL
     include 'includes/mysql_data.php';
+    //Check if there is a string string after '?' in URL, or if '?' even exists in url
     if (!empty($_SERVER["QUERY_STRING"])) {
+      //If there is a string there, set a string equal to query string
       $query = $_SERVER["QUERY_STRING"];
+      //Connect to mySQL, and display error if it gives you an error
       $con = mysqli_connect($mysql_host, $mysql_user, $mysql_pass, $mysql_db);
       if (mysqli_connect_errno()) {
         echo "Error connecting to mysql: " . mysqli_connect_errno();
       }
+      //$query should either be "Added" or "Updated", so action is explaining whether project as added or updated
       $action = $query." Project";
       $user = $_SESSION['Username'];
-      //$result = mysqli_query($con, "INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."', '".$_SERVER['REMOTE_ADDR']."', '".$query." Project')");
-      if (logAction($con,$info,$user,$action)) {
-        echo "<script type=\"text/javascript\">window.location.href = 'your_projects.php'</script>;";
-      }
-    }
-  }
-/*
-    function addProject() {
-    include 'includes/mysql_data.php';
-    //QUERY_STRING is the query after the '?' in the url
-    if (!empty($_SERVER["QUERY_STRING"])) {
-      $query = explode("%20", $_SERVER["QUERY_STRING"]);
-      //If there is QUERY_STRING, connect to mysql
-      $con = mysqli_connect($mysql_host, $mysql_user, $mysql_pass, $mysql_db);
-      if (mysqli_connect_errno()) {
-        echo "Error connecting to mysql: " . mysqli_connect_errno();
-      }
-      $regSession = array();
-      if ($_SESSION["Office"] != "Admin" && $_SESSION["Office"] != "HQ") {
-        $query[count($query)-3] = $_SESSION["Region"];
-        $regSession["Area"] = $_SESSION["Region"];
-      } else {
-        $regSession["Area"] = $_SESSION["Office"];
-      }
-      $regSession["cartodb_id"] = $query[count($query)-2];
-      //QUERY_STRING is separated by spaces (%20 in address bar) so turn into array based on spaces
-      //Find how many projects in log if old projects have same cartodb_id
-      $number = "SELECT count(*) AS `projNumber` FROM ".$project_backups." WHERE `cartodb_id`='".$query[count($query)-2]."'";
-      //Insert project info into log of old projects, including version (based on how many have already same cartodb_id)
-      $SQL = "INSERT INTO ".$project_backups." (`cartodb_id`, `Project Name`, `Country`, `Primary Sector`, `Other Sectors`, `Scale`, `Issue`, `Solution`, `Results`, `Target Users`, `Creators`, `Status`, `Links`, `Contacts`, `the_geom`, `cartodb_georef_status`, `tech_innovatio`, `created_at`, `updated_at`, `region`, `Version`) VALUES ('".$query[count($query)-2]."',";
-      //Add all values into SQL query string
-      for ($i = 0; $i < count($query)-2; $i++) {
-        //Replace single ' with '' and &20^ (placeholder for spaces) with an actual space
-        $SQL .= "'".str_replace("&20^"," ",str_replace("'","''",$query[$i]))."'";
-        $SQL .= ",";
-      }
-      //$numResult is query for the number of projects with same cartodb_id from old project table
-      $numResult = mysqli_query($con,$number);
-      //$data fethces associative array from $numResult, where this['projNumber'] is number of projects with same cartodb_id
-      $data = mysqli_fetch_assoc($numResult);
-      //$version is number of projects with same cartodb_id, plus 1, to indicate that this is the newest version to add to the projects log
-      $version = $data['projNumber'] + 1;
-      //Also the last column, so add last
-      $SQL .= $version;
-      //Add ending parenthesis for syntax
-      $SQL .= ")";
-      //Query the insert
-      mysqli_query($con,$SQL);
-      //The final item in the query array is true or false, based on whether we wanted to update or add project
-      if ($query[count($query)-1] == "true") $addOrUpdate = "Updated ";
-      else $addOrUpdate = "Added ";
-      $logSQL = "INSERT INTO ".$info."(`Username`,`IP Address`,`Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', '".$addOrUpdate." Project with id: ".$query[count($query)-2].", version: ".$version."')";
-      //Query insert
-      mysqli_query($con,$logSQL);
-      if ($query[count($query)-1]=="false") {
-        echo "<script>updateRegion(".json_encode($regSession).");</script>";
-      } else {
-        echo "<script>window.location.href = 'your_projects.php';</script>";
+      //Make sure "Added" and "Updated" are the ONLY queries the page will log, in order to avoid manipulation with other queries
+      if ($query == "Added" || $query == "Updated") {
+        //Wait for mySQL to log project addition or project update, THEN redirect to project dashboard
+        if (logAction($con,$info,$user,$action)) {
+          //Redirect to project dashboard url without query string to avoid query string manipulation (which could end up manipulating the logs heavily)
+          echo "<script type=\"text/javascript\">window.location.href = 'your_projects.php'</script>;";
+        }
       }
     }
   }
 
-
-  function addUpdatedProject() {
-    include 'includes/mysql_data.php';
-    if (!empty($_SERVER["QUERY_STRING"])) {
-      $con = mysqli_connect($mysql_host, $mysql_user, $mysql_pass, $mysql_db);
-      if (mysqli_connect_errno()) {
-        echo "Error connecting to mysql: " . mysqli_connect_errno();
-      }
-      
-      $query = explode("%20", $_SERVER["QUERY_STRING"]);
-
-      $number = "SELECT count(*) AS `projNumber` FROM ".$project_backups." WHERE `cartodb_id`='".$query[count($query)-1]."'";
-      $SQL = "INSERT INTO ".$project_backups." (`cartodb_id`, `Project Name`, `Country`, `Primary Sector`, `Other Sectors`, `Scale`, `Issue`, `Solution`,
-      `Results`, `Target Users`, `Creators`, `Status`, `Links`, `Contacts`, `Version`) VALUES ('".$query[count($query)-1]."',";
-      for ($i = 0; $i < count($query)-1; $i++) {
-        $SQL .= "'".str_replace("&20^"," ",str_replace("'","''",$query[$i]))."'";
-        $SQL .= ",";
-      }
-      $numResult = mysqli_query($con,$number);
-      $data = mysqli_fetch_assoc($numResult);
-      $version = $data['projNumber'] + 1;
-      $SQL .= $version;
-      $SQL .= ")";
-      mysqli_query($con,$SQL);
-      $logSQL = "INSERT INTO ".$info."(`Username`,`IP Address`,`Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'Updated Project with id: ".$query[count($query)-1].", version: ".$version."')";
-      mysqli_query($con,$logSQL);
-      echo "<script>window.location.href = 'your_projects.php';</script>'";
-    }
-  }
+  /*
+    logAction() - Logs every action read by server on a phpmyadmin database table
+    $con - mySQL database connection
+    $table - $table that all log data is being inserted into
+    $user - name of user (either "Guest" if logged out, or Username of user if logged in)
+    $action - action that will be logged (eg. 'Visited page X', or 'Logged In')
   */
-
   function logAction($con, $table, $user, $action) {
+    //Insert everything into the table, and return the result (returning is used to determine if the query was successful or not)
     return mysqli_query($con,"INSERT INTO ".$table." (`Username`, `IP Address`, `Action`) VALUES ('".$user."', '".$_SERVER['REMOTE_ADDR']."', '".$action."')");
   }
 
+  /*
+    createHeader() - creates header with all metadata, scripts used by the whole website, and boostrap files
+  */
   function createHeader() {
     $header = <<<HEADER
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -296,6 +275,9 @@ HEADER;
     echo $header;
   }
 
+  /*
+    jsDocuments() - used to add scripts to end of page (helps page load faster). Any scripts that don't need to be loaded earlier can go here
+  */
   function jsDocuments() {
     $scripts = '<script src="js/jquery.min.js"></script>';
     $scripts .= '<script src="bootstrap/js/bootstrap.min.js"></script>';
@@ -303,6 +285,10 @@ HEADER;
     echo $scripts;
   } 
 
+  /*
+    NTLMHash() - passwords are encrypted via this hash. Change the hashing function however you like for your own database
+    $Input - non-encrypted inputted potential password that must be encrypted in order to be read by database
+  */
   function NTLMHash($Input) {
     // Convert the password from UTF8 to UTF16 (little endian)
     $Input=iconv('UTF-8','UTF-16LE',$Input);
@@ -318,11 +304,5 @@ HEADER;
     $UpperCaseHash=strtoupper($MD4Hash);
     // Return the result
     return($UpperCaseHash);
-  }
-
-  function logToFile( $str ) {
-    $file = fopen("searches.txt","a");
-    echo fwrite($file, $str." time: ".time());
-    fclose($file);
   }
 ?>
