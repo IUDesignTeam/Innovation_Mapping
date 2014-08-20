@@ -60,8 +60,7 @@ function createProjectForm( p_formType, p_formEle ) {
     if( validateSubmitResults() ){
       // Set the user
       // Need to parse the region value
-      var user = $('#user a').text().replace("(", "").replace(")","");
-      $('input[name="unicef_region"]').val(user);
+      $('input[name="unicef_region"]').val( getRegion() );
 
       // Get the address for the project
       var address = $('#q02_country').val();
@@ -117,8 +116,6 @@ function createProjectForm( p_formType, p_formEle ) {
 */
 function createTable( p_rows ) {
   // Set the user
-  var user = $('#user a').text().replace("(", "").replace(")","");
-  $('#userOffice').append(user);
 
   var numProj = p_rows.length;
 
@@ -308,6 +305,9 @@ getOfficeProjects()
 */
 function getOfficeProjects( p_sessionObj ){
   console.log(p_sessionObj);
+  //Append the Area (Country Name, Region Name, HQ, or Admin depending on office) of office to dashboard title
+  $('#userOffice').append(p_sessionObj['Area']);
+
   var tempString;
   //Find out what countries they can see. HQ can see all, others only some
   if (p_sessionObj["Office"] != "HQ" && p_sessionObj["Office"] != "Admin"){

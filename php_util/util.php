@@ -38,6 +38,13 @@
         $_SESSION['Office'] = $row['a_co_ro_hq'];
         $_SESSION['Region'] = $row['k_region'];
         $_SESSION['Country'] = $row['d_country'];
+        if ($_SESSION['Office'] == 'CO') {
+          $_SESSION['Area'] = $_SESSION['Country'];
+        } else if ($_SESSION['Office'] == 'Admin') {
+          $_SESSION['Area'] = 'Admin';
+        } else {
+          $_SESSION['Area'] = $_SESSION['Region'];
+        }
         //Row 2 is for table of country logins, so if it is a country office and not a region office, find the region
         mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'Logged In')");
         header("Location: your_projects.php");
@@ -104,6 +111,7 @@ NAVBAR;
       $nav_menu .= " href='".$links[$i]."'>".$link_names[$i]."</a></li>";
     }
     // To keep track of the Region
+    $area = "";
     if( isset($_SESSION['Region']) && !empty($_SESSION['Region']) ){
       $nav_menu .= "<li id='user'><a>(".$_SESSION['Region'].")</a></li>";
     }
@@ -121,6 +129,7 @@ NAVBAR;
     $session['Office'] = $_SESSION['Office'];
     $session['Region'] = $_SESSION['Region'];
     $session['Country'] = $_SESSION['Country'];
+    $session['Area'] = $_SESSION['Area'];
 
     $script = "<script>getOfficeProjects(".json_encode($session).");</script>";
     echo $script;
