@@ -1,11 +1,1 @@
-Filter Search For: q03a_sector='Health'|| time: 1408555563
-Filter Search For: q03a_sector='Health,Nutrition'|| time: 1408555564
-Keyword Search For: asudhsaoudh time: 1408555772
-Filter Search For: q03a_sector='HIV'|| time: 1408556024
-Filter Search For: q03a_sector='HIV,WASH'|| time: 1408556025
-Keyword Search For: hello|| time: 1408556034
-Filter Search For: q03a_sector='Nutrition'|| date/time: 2014-08-20 19:42:41|| Remote Address: ::1
-Filter Search For: q03a_sector='Nutrition,Education'|| date/time: 2014-08-20 19:42:41|| Remote Address: ::1
-Keyword Search For: word='Hi'|| date/time: 2014-08-20 19:46:02|| Remote Address: ::1
-Filter Search For: q03a_sector='HIV'|| date/time: 2014-08-20 11:49:27|| Remote Address: 50.75.239.226
-Filter Search For: q03a_sector='HIV,WASH'|| date/time: 2014-08-20 11:49:28|| Remote Address: 50.75.239.226
+
