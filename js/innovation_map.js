@@ -67,7 +67,12 @@ function initMap(){
     // Add an onchange event to the search box filter
     $( "#search" ).on( 'change', function(){
       var str = searchKeyword( cartodb_tables[1], [this.value], search_field );  
-      displayMapLayer('innovation', str );        
+      displayMapLayer('innovation', str );
+      console.log(this.value);
+      var wordData = {word: this.value};
+      var wordFilt = "Keyword Search For: ";
+      wordFilt += writeData(wordData);
+      writeToFile(wordFilt);        
     });
       
     // Add onclick event to the <input> elements (checkboxes)
@@ -93,6 +98,9 @@ function initMap(){
       else{
         if( parentId == "filterGroup" ){
           data = getFormValues("filterGroup");
+          var filt = "Filter Search For: ";
+          filt += writeData(data);
+          writeToFile(filt);
         }else if($(this).parent().parent().attr('id') == "software_tech_checkboxes"){
           data = getFormValues("software_tech_checkboxes");
         }
@@ -106,6 +114,7 @@ function initMap(){
       } 
       displayMapLayer('innovation', query );
       console.log("QUERY: "  + query);
+      //writeToFile("Filter Search For: ");
     });
 
     // Add onclick event to the reset button

@@ -115,7 +115,6 @@ function createProjectForm( p_formType, p_formEle ) {
 	createTable()
 */
 function createTable( p_rows ) {
-  // Set the user
 
   var numProj = p_rows.length;
 

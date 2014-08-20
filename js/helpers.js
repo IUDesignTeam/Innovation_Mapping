@@ -90,3 +90,41 @@ function getObjLength( p_object ){
 function getRegion() {
   return $('#user a').text().replace("(", "").replace(")","");
 }
+
+function writeData( p_data ) {
+  var dataStr;
+
+  for (var key in p_data) {
+    if (p_data.hasOwnProperty(key)) {
+      dataStr += key + "='" + p_data[key] + "'|| ";
+    }
+  }
+  dataStr = dataStr.replace('undefined','');
+  return dataStr;
+}
+
+function writeToFile( p_str ) {
+  jQuery.ajax({
+    url: 'php_util/fileWriting.php?'+p_str,
+    error: function() {
+      alert("Error occured with Filter data, Sorry");
+    }
+  });
+}
+/*
+jQuery.ajax({
+    type: "POST",
+    url: 'your_functions_address.php',
+    dataType: 'json',
+    data: {functionname: 'add', arguments: [1, 2]},
+
+    success: function (obj, textstatus) {
+                  if( !('error' in obj) ) {
+                      yourVariable = obj.result;
+                  }
+                  else {
+                      console.log(obj.error);
+                  }
+            }
+});
+*/

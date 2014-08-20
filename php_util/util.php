@@ -28,7 +28,9 @@
       //If neither have an array, then make sure they know password is invalid
       //Don't allow hackers to hack into database using OR
       if (!$row) {
-        mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$username."', '".$_SERVER['REMOTE_ADDR']."', 'Attempted Log In')");
+        $action = "Attempted Log In";
+        logAction($con,$info,$username,$action);
+        //mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$username."', '".$_SERVER['REMOTE_ADDR']."', 'Attempted Log In')");
         echo "<div class=\"alert alert-danger\"><p class=\"error_par\">ERROR: INVALID USERNAME AND PASSWORD</p></div>";
       } else {
         //If it is valid, start session and set session variables
@@ -46,7 +48,10 @@
           $_SESSION['Area'] = $_SESSION['Region'];
         }
         //Row 2 is for table of country logins, so if it is a country office and not a region office, find the region
-        mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'Logged In')");
+        $action = "Logged In";
+        $user = $_SESSION['Username'];
+        logAction($con,$info,$user,$action);
+        //mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'Logged In')");
         header("Location: your_projects.php");
       }
     }
@@ -60,14 +65,16 @@
   }
 
   function createNavigation($active) {
+    include 'includes/mysql_data.php';
+    $con = mysqli_connect($mysql_host,$mysql_user,$mysql_pass,$mysql_db);
     session_start();
     //Initialize array of links and link names, innovation_map and about will be on all pages, so initialize array with those links
     $links = array("http://unicefstories.org/","index.php", "about.php", "add_project.php");
     $link_names = array("Blog", "Home", "About", "Add Project");
+    $action = "On Page ".$_SERVER['PHP_SELF'];
+    $user = "";
     //If session is set, add all links for logged in people
     if (isset($_SESSION['Username']) && isset($_SESSION['Password'])) {
-      include 'includes/mysql_data.php';
-      $con = mysqli_connect($mysql_host,$mysql_user,$mysql_pass,$mysql_db);
       checkTimeout($con);
       
       //Add your projects, add project, and logout script
@@ -77,12 +84,15 @@
      /* if ($_SESSION['Office']=="Admin") {
         $link_names[5] = "Admin"; $links[5] = "#admin";
       }*/
-      mysqli_query($con,"INSERT INTO ".$info."(`Username`,`IP Address`,`Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'On Page".$_SERVER['PHP_SELF']."')");
+      $user = $_SESSION['Username'];
+      //mysqli_query($con,"INSERT INTO ".$info."(`Username`,`IP Address`,`Action`) VALUES ('".$_SESSION['Username']."','".$_SERVER['REMOTE_ADDR']."', 'On Page".$_SERVER['PHP_SELF']."')");
     } else {
+      $user = "Guest";
       //If session not set, only add log in link
       array_push($links, "login.php");
       array_push($link_names,"Log In");
     }
+    logAction($con,$info,$user,$action);
     //Echo navbar style class items
     $nav_menu = <<<NAVBAR
     <nav class="navbar-wrapper navbar-default navbar-static-top" role="navigation">     
@@ -145,7 +155,7 @@ NAVBAR;
   function checkTimeout($con) {
     include 'includes/mysql_data.php';
     if (isset($_SESSION['timeout']) && $_SESSION['timeout'] + 30 * 60 < time()) {
-      mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."', '".$_SERVER['REMOTE_ADDR']."', 'Timed Out')");
+      //mysqli_query($con,"INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."', '".$_SERVER['REMOTE_ADDR']."', 'Timed Out')");
       session_destroy();
       header("Location: login.php");
     } else {
@@ -161,9 +171,10 @@ NAVBAR;
       if (mysqli_connect_errno()) {
         echo "Error connecting to mysql: " . mysqli_connect_errno();
       }
-
-      $result = mysqli_query($con, "INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."', '".$_SERVER['REMOTE_ADDR']."', '".$query." Project')");
-      if ($result) {
+      $action = $query." Project";
+      $user = $_SESSION['Username'];
+      //$result = mysqli_query($con, "INSERT INTO ".$info." (`Username`, `IP Address`, `Action`) VALUES ('".$_SESSION['Username']."', '".$_SERVER['REMOTE_ADDR']."', '".$query." Project')");
+      if (logAction($con,$info,$user,$action)) {
         echo "<script type=\"text/javascript\">window.location.href = 'your_projects.php'</script>;";
       }
     }
@@ -255,6 +266,10 @@ NAVBAR;
   }
   */
 
+  function logAction($con, $table, $user, $action) {
+    return mysqli_query($con,"INSERT INTO ".$table." (`Username`, `IP Address`, `Action`) VALUES ('".$user."', '".$_SERVER['REMOTE_ADDR']."', '".$action."')");
+  }
+
   function createHeader() {
     $header = <<<HEADER
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -303,5 +318,11 @@ HEADER;
     $UpperCaseHash=strtoupper($MD4Hash);
     // Return the result
     return($UpperCaseHash);
+  }
+
+  function logToFile( $str ) {
+    $file = fopen("searches.txt","a");
+    echo fwrite($file, $str." time: ".time());
+    fclose($file);
   }
 ?>
