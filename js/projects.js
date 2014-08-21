@@ -58,7 +58,12 @@ function createProjectForm( p_formType, p_formEle ) {
       
     // Validate the data
     if( validateSubmitResults() ){
+<<<<<<< HEAD
       // Set the Region name for the title in the table
+=======
+      // Set the user
+      // Need to parse the region value
+>>>>>>> 3ec8a4001a8862f92355150eae4c23c9f6c600b6
       $('input[name="unicef_region"]').val( getRegion() );
 
       // Get the address for the project
@@ -84,7 +89,24 @@ function createProjectForm( p_formType, p_formEle ) {
         }
         console.log("QUERY: "+query);
         // Post to CartoDB table
+<<<<<<< HEAD
         postToCartoDB( query );    
+=======
+        postToCartoDB( query, function(){
+          var msg = "Project has been added successfully";
+          // Add a success message   
+          var msg_box = addParagraph(msg, "alert alert-info");
+          $('#formInputs').before(msg_box);
+          $(window).scrollTop(0);
+          var queryArray = query.split(" ");
+          var firstWord = queryArray[0];
+          if (firstWord.toUpperCase() == "UPDATE") {
+            window.location.href = 'your_projects.php?Updated';
+          } else if (firstWord.toUpperCase() == "INSERT") {
+            window.location.href = 'your_projects.php?Added';
+          }
+        });    
+>>>>>>> 3ec8a4001a8862f92355150eae4c23c9f6c600b6
       });
     }
   });
@@ -97,15 +119,14 @@ function createProjectForm( p_formType, p_formEle ) {
 	addBootstrapClasses();
 }
 
-function redirect( p_obj ) {
-  console.log(p_obj);
-}
-
 /*
 	createTable()
 */
 function createTable( p_rows ) {
+<<<<<<< HEAD
   // Set the user
+=======
+>>>>>>> 3ec8a4001a8862f92355150eae4c23c9f6c600b6
 
   var numProj = p_rows.length;
 
@@ -359,6 +380,9 @@ getOfficeProjects()
 */
 function getOfficeProjects( p_sessionObj ){
   console.log(p_sessionObj);
+  //Append the Area (Country Name, Region Name, HQ, or Admin depending on office) of office to dashboard title
+  $('#userOffice').append(p_sessionObj['Area']);
+
   var tempString;
   //Find out what countries they can see. HQ can see all, others only some
   if (p_sessionObj["Office"] != "HQ" && p_sessionObj["Office"] != "Admin"){
