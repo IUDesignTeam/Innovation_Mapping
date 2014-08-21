@@ -87,11 +87,6 @@ function getObjLength( p_object ){
   return count;
 }
 
-<<<<<<< HEAD
-function getRegion(){
-  return $('#user a').text().replace("(", "").replace(")","");
-}
-=======
 function getRegion() {
   return $('#user a').text().replace("(", "").replace(")","");
 }
@@ -133,4 +128,3 @@ jQuery.ajax({
             }
 });
 */
->>>>>>> 3ec8a4001a8862f92355150eae4c23c9f6c600b6

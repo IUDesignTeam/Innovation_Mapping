@@ -58,12 +58,7 @@ function createProjectForm( p_formType, p_formEle ) {
       
     // Validate the data
     if( validateSubmitResults() ){
-<<<<<<< HEAD
-      // Set the Region name for the title in the table
-=======
-      // Set the user
-      // Need to parse the region value
->>>>>>> 3ec8a4001a8862f92355150eae4c23c9f6c600b6
+      // Set the Region name
       $('input[name="unicef_region"]').val( getRegion() );
 
       // Get the address for the project
@@ -89,9 +84,6 @@ function createProjectForm( p_formType, p_formEle ) {
         }
         console.log("QUERY: "+query);
         // Post to CartoDB table
-<<<<<<< HEAD
-        postToCartoDB( query );    
-=======
         postToCartoDB( query, function(){
           var msg = "Project has been added successfully";
           // Add a success message   
@@ -106,7 +98,6 @@ function createProjectForm( p_formType, p_formEle ) {
             window.location.href = 'your_projects.php?Added';
           }
         });    
->>>>>>> 3ec8a4001a8862f92355150eae4c23c9f6c600b6
       });
     }
   });
@@ -123,11 +114,6 @@ function createProjectForm( p_formType, p_formEle ) {
 	createTable()
 */
 function createTable( p_rows ) {
-<<<<<<< HEAD
-  // Set the user
-=======
->>>>>>> 3ec8a4001a8862f92355150eae4c23c9f6c600b6
-
   var numProj = p_rows.length;
 
   // Get the number of rows
