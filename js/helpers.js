@@ -86,3 +86,7 @@ function getObjLength( p_object ){
   }
   return count;
 }
+
+function getRegion(){
+  return $('#user a').text().replace("(", "").replace(")","");
+}

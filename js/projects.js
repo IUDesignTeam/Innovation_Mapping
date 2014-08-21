@@ -58,10 +58,8 @@ function createProjectForm( p_formType, p_formEle ) {
       
     // Validate the data
     if( validateSubmitResults() ){
-      // Set the user
-      // Need to parse the region value
-      var user = $('#user a').text().replace("(", "").replace(")","");
-      $('input[name="unicef_region"]').val(user);
+      // Set the Region name for the title in the table
+      $('input[name="unicef_region"]').val( getRegion() );
 
       // Get the address for the project
       var address = $('#q02_country').val();
@@ -81,18 +79,12 @@ function createProjectForm( p_formType, p_formEle ) {
           query = constructInsertQuery( cartodb_tables[1], data );
         } 
         else if( current_form == "updateProjForm" ){ 
-          var columnId = {"column":"cartodb_id", "value": $('#'+current_form).parent().attr('id')};
+          var columnId = {"column":"cartodb_id", "value": $('#projUpdate').prev().attr('id')};
           query = constructUpdateQuery( cartodb_tables[1], data, columnId );
         }
         console.log("QUERY: "+query);
         // Post to CartoDB table
-        postToCartoDB( query, function(){
-          var msg = "Project has been added successfully";
-          // Add a success message   
-          var msg_box = addParagraph(msg, "alert alert-info");
-          $('#formInputs').before(msg_box);
-          $(window).scrollTop(0);
-        });    
+        postToCartoDB( query );    
       });
     }
   });
@@ -114,8 +106,6 @@ function redirect( p_obj ) {
 */
 function createTable( p_rows ) {
   // Set the user
-  var user = $('#user a').text().replace("(", "").replace(")","");
-  $('#userOffice').append(user);
 
   var numProj = p_rows.length;
 
@@ -186,25 +176,89 @@ function attachForm( p_row ) {
   createProjectForm('update', form_ele);
 
   var obj = {"cartodb_id": [p_row.id]};
-  var query = constructSelectQuery(cartodb_tables[1], obj, false );
+  console.log("ROW ID: " + p_row.id);
+  var query = constructSelectQuery(cartodb_tables[1], obj, false, false );
+  console.log("UPDATA QUERY: " + query);
   getFromCartoDB( query, fillInForm ); 
 }
 
 /*
-	fillInForm()
+	fillInForm() - Populates the form's input fields with the appropriate project data
 */
 function fillInForm( p_project ) {
   var prj = p_project[0];
+  //console.log(JSON.stringify(prj));
 
-  // Fill in the input's values
-  $('input, textarea').each(function() {
-    if (this.type == "checkbox" || this.type == "radio") {
-      if(prj[this.name] && prj[this.name].indexOf(this.value) >= 0) this.checked = true;
-    } 
-    else {
-      this.value = prj[this.name];
-     // if(this.name == "unicef_region")
-      //  this.value = $('#user a').text().replace("(", "").replace(")","");
+  // Loop throught project object and for each key:value pair 
+  // fill in the appropriate form field
+  $.each( prj, function( key, val){
+    // Find the field with the sprecific name
+    var field = $('[name="'+ key +'"]');
+  
+    // If the field result length is more than 1, then its an array(checkboxes)
+    if( field.length > 1 ){
+      if( val != null && val != "" ){
+        // Break apart the val string
+        var previous_ans = val.split(/;|,/);
+
+        // Get all the checkboxes values for that specific section
+        var all_options = [];
+        $.each(field, function(){
+          // Ignore 'Other' and emply string
+          if( this.value != "Other" && this.value !="" )
+            all_options.push(this.value);
+        });
+
+        // Create an array that holds the checked vales
+        var other_ans = [];
+        var checked_ans = [];
+        $.each(previous_ans, function(){
+          // Remove unwanted whitespace
+          var ans = this.trim();
+          if( $.inArray(ans, all_options) >= 0 ){
+            checked_ans.push(ans);
+          }else{
+            other_ans.push(ans);
+          }
+        });
+
+        // Loop through each element(field) to check if its value 
+        // equals to any of the projects' answers
+        $.each(field, function(){
+          // Ignore 'Other'
+          if(this.value != "Other"){
+            if(checked_ans.length > 0){
+              // Loop through each project's answers
+              for(var i=0; i<checked_ans.length; i++){
+                // Check if the values match
+                if( this.value == checked_ans[i] ){
+                  this.checked = true;
+                  console.log("TRUE");
+                }
+              }
+            }
+          }
+          else if(this.value == "Other" && other_ans.length > 0){ 
+            // Check the 'Other' option
+            this.checked = true;     
+
+            var other_values; // To store the 'other' values string
+            // If there is only one value in the array set the other_values to the 0 index
+            if(other_ans.length == 1 ){
+              other_values = other_ans[0];
+            }
+            // Else combine the other_index array values into one string
+            else{
+              other_values  = other_ans.join(", ");
+            }
+            // Fill in the text field for 'other'
+            field[field.length - 1].value = other_values;        
+          }
+        });
+      }
+    }else{
+      // Set the val as the text input's value
+      field.val(val);
     }
   });
 }
