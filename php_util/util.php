@@ -35,7 +35,7 @@
         $action = "Attempted Log In";
         logAction($con,$info,$username,$action);
         //And then add an error message to the page (alert alert-danger are bootstrap classes for styling)
-        echo "<div class=\"alert alert-danger\"><p class=\"error_par\">ERROR: INVALID USERNAME AND PASSWORD</p></div>";
+        echo "<div class=\"alert-log-in alert alert-danger\"><p class=\"error_par\">ERROR: INVALID USERNAME AND PASSWORD</p></div>";
       } else {
         //If it is valid, start session and set session variables
         session_start();
