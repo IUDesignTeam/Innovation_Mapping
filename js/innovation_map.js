@@ -58,11 +58,10 @@ function initMap(){
     customCheckboxes( ["q03a_sector_checkboxes"], sections[2].colors );
     // Make the rest of the checkboxes coustom as well but no colors
     customCheckboxes( ["portfolio_checkboxes", "software_tech_checkboxes","q04_scale_checkboxes","q09_creators_checkboxes","q08_users_checkboxes"], null );
-    
+
     // This is used for the sub technology filter
     // We need to append the sub filter to the specific main filter
     $('#prt_1').after( $('#software_tech_checkboxes') );
-    //$('#software_tech_checkboxes').hide();
 
     // Add an onchange event to the search box filter
     $( "#search" ).on( 'change', function(){
@@ -76,9 +75,9 @@ function initMap(){
     });
       
     // Add onclick event to the <input> elements (checkboxes)
-    $('.checkbox input, .radio input').on( 'click', function(e){
+    $('.checkbox input, .radio input').on( 'click', function(){
       var parentId = $(this).parent().parent().parent().attr('id');
-      //console.log("ID: " + parentId);
+      console.log("ID: " + parentId);
       var keywords, query;
       
       // Check what portfolio input is checked
@@ -86,7 +85,6 @@ function initMap(){
         if( $(this).val() == "Real-time Data" ){
           keywords = portfolios[1].keywords;
           $('.sub_checkboxes').toggleClass('sub_filter_hide');
-          //$('#software_tech_checkboxes').show();
         }
         else if( $(this).val() == "Youth Engagement" ){
           keywords = portfolios[0].keywords;
@@ -94,16 +92,19 @@ function initMap(){
             keywords = portfolios[2].keywords;
         }
         query = searchKeyword( cartodb_tables[1], keywords, search_field );
-      }
+      }  
       else{
         if( parentId == "filterGroup" ){
           data = getFormValues("filterGroup");
+          // Used for tracking what filter was clicked
           var filt = "Filter Search For: ";
           filt += writeData(data);
           writeToFile(filt);
-        }else if($(this).parent().parent().attr('id') == "software_tech_checkboxes"){
+        }
+        else if($(this).parent().parent().attr('id') == "software_tech_checkboxes"){
           data = getFormValues("software_tech_checkboxes");
         }
+       
         // If the length is not zero then there is a checked input,
         // Therefore create a query, if its zero just show all points
         if(getObjLength(data) != 0){
@@ -112,7 +113,7 @@ function initMap(){
           query = constructSelectQuery(cartodb_tables[1],null,true,null);
         }
       } 
-      displayMapLayer('innovation', query );
+      displayMapLayer('innovation', query);
       console.log("QUERY: "  + query);
       //writeToFile("Filter Search For: ");
     });
@@ -188,7 +189,7 @@ function createFilters() {
       sections[2],    // Primary sector
       sections[5],    // Scale 
       sections[6],    // Created By 
-      sections[7]     // Created For (Target)
+      sections[7]    // Created For (Target)
   ];   
   docFrag.appendChild( createGroupFilters(checkboxes_filters, null) );
   return docFrag;
@@ -215,7 +216,8 @@ function createGroupFilters( p_arrayOfFilters, p_separationEle ) {
       filter_values = filter.input_value.slice(0,filter.input_value.length-1 );
     }else{
       filter_values = filter.input_value;
-    } 
+    }
+   
     var inputs = createInputElements( filter.cartodb_field, "checkbox", filter.title, filter_values );
     inputs.id = filter.cartodb_field + "_checkboxes";
     inputs.className = "filter_container";

@@ -9,9 +9,18 @@ getFormValues() - Returns an object that contain all the user's input values.
   p_form  - form's id 
 */
 function getFormValues( p_formId ){
+	var form_answers;
 	var answers = {};
 
-	var form_answers = $('#'+p_formId).find('input:checked, input:text, textarea, input:hidden, select');
+	// The input:hidden messes up when getting hte results for filters
+	// To fix this check if the p_formId contains a substring
+	var pattern = /Form/gi;
+	if( pattern.test(p_formId) ){
+		form_answers = $('#'+p_formId).find('input:checked, input:text, textarea, input:hidden, select');
+	}else{
+		form_answers = $('#'+p_formId).find('input:checked, input:text, textarea, select');
+	}
+	console.log("FORM A: "  +form_answers);
 	for( var i=0; i<form_answers.length; i++){
 		// Current answer
 		var ans = form_answers[i];

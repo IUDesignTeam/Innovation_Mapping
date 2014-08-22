@@ -1,1 +1,5 @@
 
+Filter Search For: ongoing='Yes'|| date/time: 2014-08-22 08:07:04|| Remote Address: ::1
+Filter Search For: q09_creators='N.G.O.s'|| ongoing='Yes'|| date/time: 2014-08-22 08:07:09|| Remote Address: ::1
+Filter Search For: q09_creators='N.G.O.s'|| ongoing='Yes,No'|| date/time: 2014-08-22 08:07:12|| Remote Address: ::1
+Filter Search For: q03a_sector='HIV'|| date/time: 2014-08-22 09:42:33|| Remote Address: ::1

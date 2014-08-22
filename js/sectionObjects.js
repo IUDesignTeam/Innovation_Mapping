@@ -24,19 +24,6 @@ var form_json = {"sections" : [
 		"cartodb_field": "q02_country",
 		"required": true
 	},
-/*	{
-		"title": "Focus Areas",
-		"help_text": "Please select all that applies.",
-		"input_type": "checkbox",
-		"cartodb_field": "q03b_sector",
-		"input_value": [
-			"Health", "HIV", "Nutrition", "WASH", "Education", "Child Protection", "Monitoring and Evaluation", "Supply", "Social Inclusion", "Emergency", "C4D", "Social Policy", "Other"
-		],
-		"required": true,
-		"colors": [
-			'#ff6600', '#850200', '#ff00ff', '#0099ff', '#136400', '#081b47', '#33ff00', '#9999cc', '#7b00b4', '#cc0066', '#990066'
-		]
-	},*/
 	{
 		"title": "Primary Sector",
 		"help_text": "Please select the primary sector",
@@ -47,7 +34,7 @@ var form_json = {"sections" : [
 		],
 		"required": true,
 		"colors": [
-			'#ff6600', '#850200', '#ff00ff', '#0099ff', '#136400', '#081b47', '#33ff00', '#9999cc', '#7b00b4', '#cc0066', '#990066'
+			"#ff6600", "#850200", "#ff00ff", "#0099ff", "#136400", "#081b47", "#33ff00", "#9999cc", "#7b00b4", "#cc0066", "#990066"
 		]  
 	},
 	{
@@ -60,7 +47,6 @@ var form_json = {"sections" : [
 		],
 		"required": false
 	},
-
 	{
 		"title": "Portfolio",
 		"help_text": "Please select all that apply.", 
@@ -149,6 +135,7 @@ var form_json = {"sections" : [
 		"help_text": "What are the main indicators to evaluate results? (Limit response to 100 words, 50 words recommended).",
 		"input_type": "textarea",
 		"cartodb_field": "evaluation_method",
+		"required": true
 	},
 	{
 		"title": "Number of target users/beneficiaries impacted so far.",
